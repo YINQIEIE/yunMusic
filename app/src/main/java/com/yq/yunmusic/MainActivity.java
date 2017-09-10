@@ -2,33 +2,80 @@ package com.yq.yunmusic;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import com.yq.yunmusic.adapter.MyFragmentAdapter;
+import com.yq.yunmusic.base.BaseActivity;
+import com.yq.yunmusic.base.BaseFragment;
+import com.yq.yunmusic.fragments.SongsFragment;
+import com.yq.yunmusic.statusbar.StatusBarUtil;
+import com.yq.yunmusic.utils.BitmapHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindArray;
+import butterknife.BindView;
+
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
+    @BindArray(R.array.titles_main)
+    String[] titles;
+    @BindView(R.id.viewpager)
+    ViewPager viewpager;
+    @BindView(R.id.tabLayout)
+    TabLayout tabLayout;
+    private MyFragmentAdapter adapter;
+    private View headerView;
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_main;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        StatusBarUtil.setColorNoTranslucentForDrawerLayout(this, drawer,
+                getResources().getColor(R.color.themeColor));
+        init();
+    }
+
+    private void init() {
         setSupportActionBar(toolbar);
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        headerView = navigationView.getHeaderView(0);
+        ImageView imageView = (ImageView) headerView.findViewById(R.id.iv_avater);
+        imageView.setImageBitmap(BitmapHelper.getRoundCornerBitmapWithBorder(getResources(), R.mipmap.icon_avater, 14));
+        initViewPager();
+    }
+
+    private void initViewPager() {
+        List<BaseFragment> fragments = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            fragments.add(new SongsFragment());
+        }
+        adapter = new MyFragmentAdapter(getSupportFragmentManager(), fragments, titles);
+        viewpager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewpager);
     }
 
     @Override
@@ -41,48 +88,23 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_homepage) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_scan_download) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_about_yueyun) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_github_login) {
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.exit) {
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
