@@ -3,6 +3,7 @@ package com.yq.yunmusic.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import butterknife.Unbinder;
 
 public abstract class BaseFragment extends Fragment {
 
+    private final String TAG = this.getClass().getSimpleName();
     Unbinder unbinder;
 
     @Nullable
@@ -32,5 +34,18 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    /**
+     * 日志打印
+     *
+     * @param content
+     */
+    public void log(String content) {
+        Log.i(TAG, content);
+    }
+
+    public void log(Object content) {
+        log(String.valueOf(content));
     }
 }

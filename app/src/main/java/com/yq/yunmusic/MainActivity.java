@@ -1,5 +1,6 @@
 package com.yq.yunmusic;
 
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -11,10 +12,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.yq.yunmusic.adapter.MyFragmentAdapter;
 import com.yq.yunmusic.base.BaseActivity;
 import com.yq.yunmusic.base.BaseFragment;
+import com.yq.yunmusic.fragments.LocalMusicFragment;
 import com.yq.yunmusic.fragments.SongsFragment;
 import com.yq.yunmusic.statusbar.StatusBarUtil;
 import com.yq.yunmusic.utils.BitmapHelper;
@@ -64,13 +67,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         navigationView.setNavigationItemSelectedListener(this);
         headerView = navigationView.getHeaderView(0);
         ImageView imageView = (ImageView) headerView.findViewById(R.id.iv_avater);
+        LinearLayout ll_nav_header = (LinearLayout) headerView.findViewById(R.id.ll_nav_header);
+        ll_nav_header.setBackground(new BitmapDrawable(BitmapHelper.getBluredBitmap(getApplicationContext(), R.mipmap.nav_header_bac, 4)));
         imageView.setImageBitmap(BitmapHelper.getRoundCornerBitmapWithBorder(getResources(), R.mipmap.icon_avater, 14));
         initViewPager();
     }
 
     private void initViewPager() {
         List<BaseFragment> fragments = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
+        fragments.add(new LocalMusicFragment());
+        for (int i = 1; i < 4; i++) {
             fragments.add(new SongsFragment());
         }
         adapter = new MyFragmentAdapter(getSupportFragmentManager(), fragments, titles);

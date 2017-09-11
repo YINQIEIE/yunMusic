@@ -1,5 +1,6 @@
 package com.yq.yunmusic.utils;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,11 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Build;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 
 /**
  * Created by yinqi on 2017/9/9.
@@ -22,25 +28,38 @@ public class BitmapHelper {
         return getRoundedCornerBitmap(src, radius);
     }
 
+    /**
+     * 获取圆角矩形或圆形图片的方法
+     *
+     * @param bitmap 待处理 bitmap 对象
+     * @param pixels 圆角半径，x 和 y 相等
+     * @return 返回圆角或者圆形 bitmap
+     */
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
-        final int color = 0xff424242;
         final Paint paint = new Paint();
         final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         final RectF rectF = new RectF(rect);
         final float roundPx = pixels;
 
         paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
+        //柱：一定要先画圆角矩形
         canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
         return output;
     }
 
+    /**
+     * 获取待边框的圆角矩形或圆形图片方法
+     *
+     * @param resources          {@link Resources}
+     * @param resId              对应资源 id
+     * @param borderCornerRadius 边框圆角半径，x 和 y 相等
+     * @return 圆角矩形或圆形 bitmap 对象
+     */
     public static Bitmap getRoundCornerBitmapWithBorder(Resources resources, int resId, int borderCornerRadius) {
         Bitmap src = BitmapFactory.decodeResource(resources, resId);
         Bitmap temp_out = getRoundedCornerBitmap(src, 0);//图片默认为矩形的
@@ -67,6 +86,66 @@ public class BitmapHelper {
         //画边框线
         canvas.drawRoundRect(new RectF(insetRect), borderCornerRadius, borderCornerRadius, paint);
         return out;
+    }
+
+
+    /**
+     * 根据资源 id 高斯模糊
+     *
+     * @param context    上下文
+     * @param resId      资源 ID
+     * @param blurFactor 模糊程度
+     * @return
+     */
+
+    public static Bitmap getBluredBitmap(Context context, int resId, float blurFactor) {
+        Bitmap src = BitmapFactory.decodeResource(context.getResources(), resId);
+        return blurBitmap(context, src.copy(Bitmap.Config.ARGB_8888, true), blurFactor);
+    }
+
+    //图片缩放比例
+    private static final float BITMAP_SCALE = 0.4f;
+
+    /**
+     * 模糊图片的具体方法
+     *
+     * @param context 上下文对象
+     * @param image   需要模糊的图片
+     * @return 模糊处理后的图片
+     */
+    public static Bitmap blurBitmap(Context context, Bitmap image, float blurRadius) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            // 计算图片缩小后的长宽
+            int width = Math.round(image.getWidth() * BITMAP_SCALE);
+            int height = Math.round(image.getHeight() * BITMAP_SCALE);
+
+            // 将缩小后的图片做为预渲染的图片
+            Bitmap inputBitmap = Bitmap.createScaledBitmap(image, width, height, false);
+            // 创建一张渲染后的输出图片
+            Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
+            // 创建RenderScript内核对象
+            RenderScript rs = RenderScript.create(context);
+            // 创建一个模糊效果的RenderScript的工具对象
+            ScriptIntrinsicBlur blurScript = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+            // 由于RenderScript并没有使用VM来分配内存,所以需要使用Allocation类来创建和分配内存空间
+            // 创建Allocation对象的时候其实内存是空的,需要使用copyTo()将数据填充进去
+            Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
+            Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
+
+            // 设置渲染的模糊程度, 25f是最大模糊度
+            blurScript.setRadius(blurRadius);
+            // 设置blurScript对象的输入内存
+            blurScript.setInput(tmpIn);
+            // 将输出数据保存到输出内存中
+
+            blurScript.forEach(tmpOut);
+
+            // 将数据填充到Allocation中
+            tmpOut.copyTo(outputBitmap);
+            return outputBitmap;
+        }
+        return image;
     }
 
 }
