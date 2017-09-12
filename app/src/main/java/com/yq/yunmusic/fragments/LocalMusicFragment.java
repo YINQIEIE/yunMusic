@@ -57,6 +57,7 @@ public class LocalMusicFragment extends BaseFragment {
         infos.add(new LocalInfo(getString(R.string.recent_play), 0, R.mipmap.music_icn_recent));
         infos.add(new LocalInfo(getString(R.string.download_manage), 0, R.mipmap.music_icn_dld));
         infos.add(new LocalInfo(getString(R.string.artist), 0, R.mipmap.music_icn_artist));
+        infos.add(new LocalInfo("我的歌单", 0, R.mipmap.music_icn_artist));
 
         multiAdapter = new MultiItemTypeAdapter(getActivity(), infos);
         multiAdapter.addItemViewDelegate(new ItemViewDelegate<LocalInfo>() {
@@ -68,7 +69,7 @@ public class LocalMusicFragment extends BaseFragment {
 
             @Override
             public boolean isForViewType(LocalInfo item, int position) {
-                return true;
+                return position < 4;
             }
 
             @Override
@@ -79,11 +80,51 @@ public class LocalMusicFragment extends BaseFragment {
             }
         });
 
+        multiAdapter.addItemViewDelegate(new ItemViewDelegate<LocalInfo>() {
+
+            @Override
+            public int getItemViewLayoutId() {
+                return R.layout.item_songs_menu;
+            }
+
+            @Override
+            public boolean isForViewType(LocalInfo item, int position) {
+                return position == 4;
+            }
+
+            @Override
+            public void convert(ViewHolder holder, LocalInfo localInfo, int position) {
+//                holder.setImageResource(R.id.iv_icon, localInfo.getIconId());
+                holder.setText(R.id.tv_title, localInfo.getTitle());
+//                holder.setText(R.id.tv_count, String.valueOf(localInfo.getCount()));
+                setMenuRecyclerView((RecyclerView) holder.getView(R.id.rv_menu));
+            }
+        });
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(multiAdapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
 
         new GetSongsTask(getActivity()).execute();
+    }
+
+    private void setMenuRecyclerView(RecyclerView recyclerView) {
+        List<LocalInfo> menus = new ArrayList<>();
+        menus.add(new LocalInfo("流行", 100, R.mipmap.icon_menu_created));
+        menus.add(new LocalInfo("摇滚", 100, R.mipmap.icon_menu_created));
+        menus.add(new LocalInfo("古典", 100, R.mipmap.icon_menu_created));
+        adapter = new CommonAdapter<LocalInfo>(getActivity(), R.layout.item_songs_menu_rv, menus) {
+
+            @Override
+            protected void convert(ViewHolder holder, LocalInfo localInfo, int position) {
+                holder.setText(R.id.tv_menu_name, localInfo.getTitle());
+                holder.setText(R.id.tv_count, localInfo.getCount() + "首");
+            }
+        };
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        recyclerView.setAdapter(adapter);
     }
 
     private class LocalInfo {

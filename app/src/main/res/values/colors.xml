@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="tabColor">#CCFFFFFF</color>
     <color name="themeColor">#FFCE3D3A</color>
+    <color name="grayLight">#40CCCCCC</color>
 </resources>
