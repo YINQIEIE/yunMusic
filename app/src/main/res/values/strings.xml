@@ -5,8 +5,16 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-
+    <!--首页标题-->
     <string-array name="titles_main">
+        <item>我的</item>
+        <item>乐库</item>
+        <item>直播</item>
+        <item>唱歌</item>
+    </string-array>
+
+    <!--本地音乐标题-->
+    <string-array name="titles_local_music">
         <item>我的</item>
         <item>乐库</item>
         <item>直播</item>

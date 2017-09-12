@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 import com.yq.yunmusic.adapter.MyFragmentAdapter;
 import com.yq.yunmusic.base.BaseActivity;
 import com.yq.yunmusic.base.BaseFragment;
-import com.yq.yunmusic.fragments.LocalMusicFragment;
+import com.yq.yunmusic.fragments.LocalFragment;
 import com.yq.yunmusic.fragments.SongsFragment;
 import com.yq.yunmusic.statusbar.StatusBarUtil;
 import com.yq.yunmusic.utils.BitmapHelper;
@@ -75,11 +75,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void initViewPager() {
         List<BaseFragment> fragments = new ArrayList<>();
-        fragments.add(new LocalMusicFragment());
+        fragments.add(new LocalFragment());
         for (int i = 1; i < 4; i++) {
             fragments.add(new SongsFragment());
         }
         adapter = new MyFragmentAdapter(getSupportFragmentManager(), fragments, titles);
+        viewpager.setOffscreenPageLimit(fragments.size() - 1);
         viewpager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewpager);
     }
