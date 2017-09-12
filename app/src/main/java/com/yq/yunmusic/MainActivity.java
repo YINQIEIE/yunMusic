@@ -82,6 +82,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         adapter = new MyFragmentAdapter(getSupportFragmentManager(), fragments, titles);
         viewpager.setOffscreenPageLimit(fragments.size() - 1);
         viewpager.setAdapter(adapter);
+        viewpager.setOffscreenPageLimit(fragments.size() - 1);
         tabLayout.setupWithViewPager(viewpager);
     }
 

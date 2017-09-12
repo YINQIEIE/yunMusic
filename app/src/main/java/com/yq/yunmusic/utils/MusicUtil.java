@@ -34,11 +34,11 @@ public class MusicUtil {
      */
     public static final String SEL_SONG = Media.SIZE + " > ? and " + Media.DURATION + " > ?";
     /**
-     * 歌曲查询条件
+     * 歌手查询条件
      */
     public static final String SEL_ARTIST = MediaStore.Audio.Artists._ID
-            + "in (" +
-            "select distinct " + Media.ARTIST_ID + " FROM audio_meta WHERE" + Media.SIZE + " > " + MIN_SIZE + "and " + Media.DURATION + " > " + MIN_DURATION
+            + " in (" +
+            "select distinct " + Media.ARTIST_ID + " FROM audio_meta WHERE " + Media.SIZE + " > " + MIN_SIZE + " and " + Media.DURATION + " > " + MIN_DURATION
             + ")";
 
     public static final String[] SEL_ARGS = new String[]{MIN_SIZE + "", MIN_DURATION + ""};
@@ -48,7 +48,7 @@ public class MusicUtil {
     }
 
     public static List<Song> getSongList(Context context) {
-        Cursor cursor = getMusicResolver(context).query(Media.EXTERNAL_CONTENT_URI, PRO_SONG, SEL_SONG, SEL_ARGS, null);
+        Cursor cursor = getMusicResolver(context).query(Media.EXTERNAL_CONTENT_URI, PRO_SONG, SEL_SONG, SEL_ARGS, Media.DEFAULT_SORT_ORDER);
         return getSongListByCursor(cursor);
     }
 
@@ -83,7 +83,7 @@ public class MusicUtil {
      * @return
      */
     public static List<Artist> getArtists(Context context) {
-        Cursor cursor = getMusicResolver(context).query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, PRO_ATRIST, null, null, MediaStore.Audio.Artists.DEFAULT_SORT_ORDER/*A - Z*/);
+        Cursor cursor = getMusicResolver(context).query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, PRO_ATRIST, SEL_ARTIST, null, MediaStore.Audio.Artists.DEFAULT_SORT_ORDER/*A - Z*/);
         return getArtistListByCursor(cursor);
     }
 

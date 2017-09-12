@@ -3,6 +3,7 @@ package com.yq.yunmusic.activity;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
@@ -38,7 +39,12 @@ public class LocalMusicActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("本地音乐");
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.mipmap.actionbar_back);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle("本地音乐");
+//        toolbar.setTitle("本地音乐");
         for (int i = 0; i < titles.length; i++) {
             fragments.add(new SongsTabFragment());
         }

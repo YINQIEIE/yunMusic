@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackgroundBorderless">
+    android:background="?attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/tv_name"
@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="6dp"
+        android:maxLines="1"
         android:text="仙剑奇缘"
         android:textColor="@android:color/black"
         android:textSize="16sp" />
@@ -21,11 +22,14 @@
         android:layout_alignLeft="@+id/tv_name"
         android:layout_below="@+id/tv_name"
         android:layout_marginBottom="6dp"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/iv_info"
         android:text="仙剑奇缘"
         android:textColor="@android:color/darker_gray"
         android:textSize="12sp" />
 
     <ImageView
+        android:id="@+id/iv_info"
         android:layout_width="30dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
