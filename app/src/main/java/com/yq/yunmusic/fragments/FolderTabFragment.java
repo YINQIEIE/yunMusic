@@ -50,6 +50,7 @@ public class FolderTabFragment extends BaseListFragment<Album> {
 
         @Override
         protected List<Album> doInBackground(Void... voids) {
+            MusicUtil.getFolders(getActivity());
             List<Album> albums = MusicUtil.getAlbums(getActivity());
             for (Album album : albums) {
                 log(album.toString());

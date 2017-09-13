@@ -23,21 +23,20 @@ public class MusicUtil {
     private static final int MIN_DURATION = 60 * 1000;//最短时长一分钟
     private static final int MIN_SIZE = 1024 * 1024;//最小文件 1M
 
+    public static ContentResolver getMusicResolver(Context context) {
+        return context.getApplicationContext().getContentResolver();
+    }
+
     /**
      * 歌曲查询列名称
      */
     public static final String[] PRO_SONG = new String[]{Media._ID, Media.TITLE, Media.ARTIST_ID, Media.ARTIST, Media.DURATION, Media.ALBUM_ID, Media.ALBUM, Media.SIZE, Media.DATA};
-
     /**
      * 歌曲查询条件
      */
     public static final String SEL_SONG = Media.SIZE + " > ? and " + Media.DURATION + " > ?";
 
     public static final String[] SEL_ARGS = new String[]{MIN_SIZE + "", MIN_DURATION + ""};
-
-    public static ContentResolver getMusicResolver(Context context) {
-        return context.getApplicationContext().getContentResolver();
-    }
 
     public static List<Song> getSongList(Context context) {
         Cursor cursor = getMusicResolver(context).query(Media.EXTERNAL_CONTENT_URI, PRO_SONG, SEL_SONG, SEL_ARGS, Media.DEFAULT_SORT_ORDER);
@@ -130,15 +129,6 @@ public class MusicUtil {
             "select distinct " + MediaStore.Audio.Albums.ALBUM_ID + " FROM audio_meta WHERE " + Media.DURATION + " > " + MIN_DURATION + " and " + Media.SIZE + " > " + MIN_SIZE + ")";
 
     public static List<Album> getAlbums(Context context) {
-        StringBuilder where = new StringBuilder(MediaStore.Audio.Albums._ID
-                + " in (select distinct " + Media.ALBUM_ID
-                + " from audio_meta where (1=1)");
-        where.append(" and " + Media.SIZE + " > " + MIN_SIZE);
-        where.append(" and " + Media.DURATION + " > " + MIN_DURATION);
-
-        where.append(" )");
-        Log.i("selection", SEL_ALBUM);
-        Log.i("selection", where.toString());
         Cursor cursor = getMusicResolver(context).query(
                 MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, PRO_ALBUM,
                 SEL_ALBUM, null, MediaStore.Audio.Albums.DEFAULT_SORT_ORDER
@@ -166,6 +156,17 @@ public class MusicUtil {
     private static final String[] PRO_FOLDER = new String[]{
             MediaStore.Files.FileColumns.DATA
     };
-    private static final String sel_folder = MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO
-            + " and (" + MediaStore.Files.FileColumns.DATA + " like '%.mp3'";
+    private static final String SEL_FOLDER = MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO
+            + " and (" + MediaStore.Files.FileColumns.DATA + " like '%.mp3' or '%.wmas')"
+            + " and " + Media.DURATION + " > " + MIN_DURATION
+            + " and " + Media.SIZE + " > " + MIN_SIZE + ")"
+            + " group by (" + MediaStore.Files.FileColumns.PARENT;
+
+    public static void getFolders(Context context) {
+        Cursor cursor = getMusicResolver(context).query(MediaStore.Files.getContentUri("external"), PRO_FOLDER, SEL_FOLDER, null, null);
+        while (cursor.moveToNext()) {
+            String folder = cursor.getString(0);
+            Log.i("folders", folder);
+        }
+    }
 }

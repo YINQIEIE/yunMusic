@@ -14,6 +14,7 @@ import com.yq.yunmusic.base.BaseActivity;
 import com.yq.yunmusic.base.BaseListFragment;
 import com.yq.yunmusic.fragments.AlbumTabFragment;
 import com.yq.yunmusic.fragments.ArtistTabFragment;
+import com.yq.yunmusic.fragments.FolderTabFragment;
 import com.yq.yunmusic.fragments.SongsTabFragment;
 import com.yq.yunmusic.statusbar.StatusBarUtil;
 
@@ -58,7 +59,7 @@ public class LocalMusicActivity extends BaseActivity {
         fragments.add(new SongsTabFragment());
         fragments.add(new ArtistTabFragment());
         fragments.add(new AlbumTabFragment());
-        fragments.add(new AlbumTabFragment());
+        fragments.add(new FolderTabFragment());
 
         adapter = new MyFragmentAdapter(getSupportFragmentManager(), fragments, titles);
         vpLocal.setOffscreenPageLimit(fragments.size() - 1);
