@@ -36,19 +36,24 @@ public class BitmapHelper {
      * @return 返回圆角或者圆形 bitmap
      */
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        //取 bitmap 较短的一边和 200 比较，
+        // 不足 200 像素取实际值，超过取200，
+        // 保证图片不会在分辨率较大的额情况下显示为圆角矩形
+        int size = (bitmap.getWidth() < bitmap.getHeight() ? bitmap.getWidth() : bitmap.getHeight()) > 200 ? 200 : bitmap.getWidth();
+        Bitmap output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
         final Paint paint = new Paint();
         final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
+        final Rect desRect = new Rect(0, 0, size, size);
+        final RectF rectF = new RectF(desRect);
         final float roundPx = pixels;
 
         paint.setAntiAlias(true);
         //柱：一定要先画圆角矩形
         canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
+        canvas.drawBitmap(bitmap, rect, desRect, paint);
         return output;
     }
 

@@ -5,9 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.yq.yunmusic.R;
-import com.yq.yunmusic.statusbar.StatusBarUtil;
-
 import butterknife.ButterKnife;
 
 /**
@@ -22,7 +19,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResId());
         ButterKnife.bind(this);
-        StatusBarUtil.setColorNoTranslucent(this, getResources().getColor(R.color.themeColor));
     }
 
     protected abstract int getLayoutResId();

@@ -15,10 +15,10 @@
 
     <!--本地音乐标题-->
     <string-array name="titles_local_music">
-        <item>我的</item>
-        <item>乐库</item>
-        <item>直播</item>
-        <item>唱歌</item>
+        <item>单曲</item>
+        <item>歌手</item>
+        <item>专辑</item>
+        <item>文件夹</item>
     </string-array>
 
     <!--本地音乐页面 item 标题-->

@@ -5,7 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Media;
+import android.util.Log;
 
+import com.yq.yunmusic.entity.Album;
 import com.yq.yunmusic.entity.Artist;
 import com.yq.yunmusic.entity.Song;
 
@@ -25,21 +27,11 @@ public class MusicUtil {
      * 歌曲查询列名称
      */
     public static final String[] PRO_SONG = new String[]{Media._ID, Media.TITLE, Media.ARTIST_ID, Media.ARTIST, Media.DURATION, Media.ALBUM_ID, Media.ALBUM, Media.SIZE, Media.DATA};
-    /**
-     * 歌手查询列名称
-     */
-    public static final String[] PRO_ATRIST = new String[]{MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST, MediaStore.Audio.Artists.NUMBER_OF_TRACKS};
+
     /**
      * 歌曲查询条件
      */
     public static final String SEL_SONG = Media.SIZE + " > ? and " + Media.DURATION + " > ?";
-    /**
-     * 歌手查询条件
-     */
-    public static final String SEL_ARTIST = MediaStore.Audio.Artists._ID
-            + " in (" +
-            "select distinct " + Media.ARTIST_ID + " FROM audio_meta WHERE " + Media.SIZE + " > " + MIN_SIZE + " and " + Media.DURATION + " > " + MIN_DURATION
-            + ")";
 
     public static final String[] SEL_ARGS = new String[]{MIN_SIZE + "", MIN_DURATION + ""};
 
@@ -77,6 +69,19 @@ public class MusicUtil {
     }
 
     /**
+     * 歌手查询列名称
+     */
+    public static final String[] PRO_ATRIST = new String[]{MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST, MediaStore.Audio.Artists.NUMBER_OF_TRACKS};
+
+    /**
+     * 歌手查询条件
+     */
+    public static final String SEL_ARTIST = MediaStore.Audio.Artists._ID
+            + " in (" +
+            "select distinct " + Media.ARTIST_ID + " FROM audio_meta WHERE " + Media.SIZE + " > " + MIN_SIZE + " and " + Media.DURATION + " > " + MIN_DURATION
+            + ")";
+
+    /**
      * 获取歌手信息
      *
      * @param context
@@ -104,5 +109,62 @@ public class MusicUtil {
                 cursor.close();
         }
     }
+
+   /* */
+    /**
+     * 查询歌手图片
+     *//*
+    private static String SEL_QUERY_ARTIST = MediaStore.Audio.Artists._ID + " = ?";
+
+    public void getArtistById(Context context, int id) {
+        Cursor cursor = getMusicResolver(context).query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, PRO_ATRIST, )
+    }*/
+    private static final String[] PRO_ALBUM = new String[]{
+            MediaStore.Audio.Albums._ID,
+            MediaStore.Audio.Albums.ALBUM,
+            MediaStore.Audio.Albums.ALBUM_ART,
+            MediaStore.Audio.Albums.ARTIST,
+            MediaStore.Audio.Albums.NUMBER_OF_SONGS
+    };
+    private static String SEL_ALBUM = MediaStore.Audio.Albums._ID + " in (" +
+            "select distinct " + MediaStore.Audio.Albums.ALBUM_ID + " FROM audio_meta WHERE " + Media.DURATION + " > " + MIN_DURATION + " and " + Media.SIZE + " > " + MIN_SIZE + ")";
+
+    public static List<Album> getAlbums(Context context) {
+        StringBuilder where = new StringBuilder(MediaStore.Audio.Albums._ID
+                + " in (select distinct " + Media.ALBUM_ID
+                + " from audio_meta where (1=1)");
+        where.append(" and " + Media.SIZE + " > " + MIN_SIZE);
+        where.append(" and " + Media.DURATION + " > " + MIN_DURATION);
+
+        where.append(" )");
+        Log.i("selection", SEL_ALBUM);
+        Log.i("selection", where.toString());
+        Cursor cursor = getMusicResolver(context).query(
+                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, PRO_ALBUM,
+                SEL_ALBUM, null, MediaStore.Audio.Albums.DEFAULT_SORT_ORDER
+        );
+        return getAlbumsByCursor(cursor);
+
+    }
+
+    private static List<Album> getAlbumsByCursor(Cursor cursor) {
+        List<Album> albums = new ArrayList<>();
+        if (cursor == null) return albums;
+        while (cursor.moveToNext()) {
+            Album album = new Album();
+            album.setId(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Albums._ID)));
+            album.setName(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM)));
+            album.setAlbum_art(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)));
+            album.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST)));
+            album.setCount(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS)));
+            albums.add(album);
+        }
+        cursor.close();
+        return albums;
+    }
+
+    private static final String[] PRO_FOLDER = new String[]{
+            MediaStore.Files.FileColumns.DATA
+    };
 
 }
