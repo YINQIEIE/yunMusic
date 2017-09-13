@@ -166,5 +166,6 @@ public class MusicUtil {
     private static final String[] PRO_FOLDER = new String[]{
             MediaStore.Files.FileColumns.DATA
     };
-
+    private static final String sel_folder = MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO
+            + " and (" + MediaStore.Files.FileColumns.DATA + " like '%.mp3'";
 }
