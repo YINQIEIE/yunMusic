@@ -24,6 +24,6 @@ public class LocalDelegateOne implements ItemViewDelegate<LocalInfo> {
     public void convert(ViewHolder holder, LocalInfo localInfo, int position) {
         holder.setImageResource(R.id.iv_icon, localInfo.getIconId());
         holder.setText(R.id.tv_title, localInfo.getTitle());
-        holder.setText(R.id.tv_count, String.valueOf(localInfo.getCount()));
+        holder.setText(R.id.tv_subTitle1, String.valueOf(localInfo.getCount()));
     }
 }

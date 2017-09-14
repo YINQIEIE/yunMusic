@@ -49,7 +49,7 @@ public abstract class LocalDelegateTwo implements ItemViewDelegate<LocalInfo> {
             @Override
             protected void convert(ViewHolder holder, LocalInfo localInfo, int position) {
                 holder.setText(R.id.tv_menu_name, localInfo.getTitle());
-                holder.setText(R.id.tv_count, localInfo.getCount() + "首");
+                holder.setText(R.id.tv_subTitle1, localInfo.getCount() + "首");
             }
         };
 

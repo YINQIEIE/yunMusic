@@ -42,16 +42,16 @@ public class LocalFragment extends BaseFragment {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_local;
+        return R.layout.layout_list;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         infos.add(new LocalInfo(getString(R.string.local_music), 0, R.mipmap.music_icn_local));
+        infos.add(new LocalInfo(getString(R.string.artist), 0, R.mipmap.music_icn_artist));
         infos.add(new LocalInfo(getString(R.string.recent_play), 0, R.mipmap.music_icn_recent));
         infos.add(new LocalInfo(getString(R.string.download_manage), 0, R.mipmap.music_icn_dld));
-        infos.add(new LocalInfo(getString(R.string.artist), 0, R.mipmap.music_icn_artist));
         infos.add(new LocalInfo("我的歌单", 0, 0));
         infos.add(new LocalInfo("我的收藏歌单", 0, 0));
 
@@ -88,8 +88,11 @@ public class LocalFragment extends BaseFragment {
         multiAdapter.setOnItemClickListener(new MultiItemTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
-                Intent intent = new Intent(getActivity(), LocalMusicActivity.class);
-                startActivity(intent);
+                if (position < 2) {
+                    Intent intent = new Intent(getActivity(), LocalMusicActivity.class);
+                    intent.putExtra("position", position);
+                    startActivity(intent);
+                }
             }
 
             @Override
@@ -113,7 +116,7 @@ public class LocalFragment extends BaseFragment {
         @Override
         protected List<Song> doInBackground(Void... voids) {
             List<Artist> artists = MusicUtil.getArtists(getActivity());
-            infos.get(3).setCount(artists.size());
+            infos.get(1).setCount(artists.size());
             for (Artist artist : artists) {
                 log(artist.toString());
             }
@@ -124,7 +127,7 @@ public class LocalFragment extends BaseFragment {
         protected void onPostExecute(List<Song> songs) {
             infos.get(0).setCount(songs.size());
             multiAdapter.notifyItemChanged(0);
-            multiAdapter.notifyItemChanged(3);
+            multiAdapter.notifyItemChanged(1);
 
         }
 

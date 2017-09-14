@@ -1,0 +1,135 @@
+package com.yq.yunmusic.view;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.TextView;
+
+import com.yq.yunmusic.R;
+
+/**
+ * Created by yinqi on 2017/9/14.
+ */
+
+public class SideNavigationView extends View {
+
+    // 26个字母
+    public static String[] items = {"A", "B", "C", "D", "E", "F", "G", "H", "I",
+            "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+            "W", "X", "Y", "Z", "#"};
+
+    int itemHeight = 30;//最小高度 40 px
+    private Paint mPaint;
+    private int touchPos = -1;//触摸位置
+    private TextView tv;
+
+    public SideNavigationView(Context context) {
+        this(context, null);
+    }
+
+    public SideNavigationView(Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public SideNavigationView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    private void init() {
+        setBackgroundColor(getResources().getColor(R.color.sideNavColor));
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setStrokeWidth(8);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setAntiAlias(true);
+        mPaint.setTextAlign(Paint.Align.CENTER);
+        mPaint.setTextSize(30);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int averageItemHeight = getMeasuredHeight() / items.length;
+        itemHeight = itemHeight > averageItemHeight ? itemHeight : averageItemHeight;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        float touchY = event.getY();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (null != tv)
+                    tv.setVisibility(VISIBLE);
+                if (null != mListener)
+                    mListener.onTouch(getPosition(touchY));
+                return true;
+
+            case MotionEvent.ACTION_MOVE:
+                touchPos = getPosition(touchY);
+                if (null != tv)
+                    tv.setText(items[touchPos]);
+                invalidate();
+
+                if (null != mListener)
+                    mListener.onMoving(getPosition(touchY));
+                return true;
+
+            case MotionEvent.ACTION_UP:
+                if (null != tv)
+                    tv.setVisibility(GONE);
+                return true;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    private int getPosition(float touchY) {
+        if (touchY < 10) return 0;
+        int y = (int) touchY - 10;
+        return y / itemHeight > items.length ? items.length : y / itemHeight;
+    }
+
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
+        float baseLineY = itemHeight / 2 - (fontMetrics.descent + fontMetrics.ascent) / 2;
+        for (int i = 0; i < items.length; i++) {
+            if (i == touchPos)
+                mPaint.setColor(getResources().getColor(R.color.themeColor));
+            else
+                mPaint.setColor(Color.WHITE);
+            canvas.drawText(items[i], getWidth() / 2, 10 + baseLineY + i * itemHeight, mPaint);
+        }
+    }
+
+    public void setTv(TextView tv) {
+        this.tv = tv;
+        tv.setVisibility(GONE);
+    }
+
+    private OnGestureListener mListener;
+
+    public void setMovingListener(OnGestureListener mListener) {
+        this.mListener = mListener;
+    }
+
+    public interface OnGestureListener {
+
+        void onMoving(int pos);
+
+        void onTouch(int pos);
+    }
+
+
+}

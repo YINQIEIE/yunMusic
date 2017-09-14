@@ -1,8 +1,11 @@
 package com.yq.yunmusic.base;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +22,14 @@ public abstract class BaseFragment extends Fragment {
 
     private final String TAG = this.getClass().getSimpleName();
     Unbinder unbinder;
+    protected Intent intent;
+    protected AppCompatActivity mContext;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = (AppCompatActivity) context;
+    }
 
     @Nullable
     @Override
@@ -34,6 +45,11 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    protected void startNewActivity(Class<?> clazz) {
+        intent.setClass(getActivity(), clazz);
+        startActivity(intent);
     }
 
     /**

@@ -9,8 +9,10 @@ import android.util.Log;
 
 import com.yq.yunmusic.entity.Album;
 import com.yq.yunmusic.entity.Artist;
+import com.yq.yunmusic.entity.Folder;
 import com.yq.yunmusic.entity.Song;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +44,54 @@ public class MusicUtil {
         Cursor cursor = getMusicResolver(context).query(Media.EXTERNAL_CONTENT_URI, PRO_SONG, SEL_SONG, SEL_ARGS, Media.DEFAULT_SORT_ORDER);
         return getSongListByCursor(cursor);
     }
+
+    /**
+     * 根据歌手 id 获取歌曲
+     *
+     * @param context
+     * @param id      歌手 ID
+     * @return
+     */
+    public static List<Song> getSongsByArtistId(Context context, int id) {
+        String sel = SEL_SONG + " and " + Media.ARTIST_ID + " = " + id;
+        Cursor cursor = getMusicResolver(context).query(Media.EXTERNAL_CONTENT_URI, PRO_SONG, sel, SEL_ARGS, Media.DEFAULT_SORT_ORDER);
+        return getSongListByCursor(cursor);
+    }
+
+    /**
+     * 根据专辑 id 获取歌曲
+     *
+     * @param context
+     * @param id      歌手 ID
+     * @return
+     */
+    public static List<Song> getSongsByAlbumId(Context context, int id) {
+        String sel = SEL_SONG + " and " + Media.ALBUM_ID + " = " + id;
+        Cursor cursor = getMusicResolver(context).query(Media.EXTERNAL_CONTENT_URI, PRO_SONG, sel, SEL_ARGS, Media.DEFAULT_SORT_ORDER);
+        return getSongListByCursor(cursor);
+    }
+
+    /**
+     * 根据专辑文件夹路径获取歌曲
+     *
+     * @param context
+     * @param path    文件夹路径
+     * @return
+     */
+    public static List<Song> getSongsByFilePath(Context context, String path) {
+        List<Song> songList = getSongList(context);
+        List<Song> reslutList = new ArrayList<>();
+        for (Song song : songList) {
+            String itemPath = song.getPath();
+            if (itemPath.substring(0, itemPath.lastIndexOf(File.separator)).equals(path)) {
+                reslutList.add(song);
+            }
+        }
+        return reslutList;
+    }
+
+
+    private static final String exp = " [^(a-zA-Z\\u4e00-\\u9fa5)]";
 
     public static List<Song> getSongListByCursor(Cursor cursor) {
         try {
@@ -157,16 +207,37 @@ public class MusicUtil {
             MediaStore.Files.FileColumns.DATA
     };
     private static final String SEL_FOLDER = MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO
-            + " and (" + MediaStore.Files.FileColumns.DATA + " like '%.mp3' or '%.wmas')"
+            + " and (" + MediaStore.Files.FileColumns.DATA + " like '%.mp3' or '%.wma' or '%.aac')"
             + " and " + Media.DURATION + " > " + MIN_DURATION
             + " and " + Media.SIZE + " > " + MIN_SIZE + ")"
             + " group by (" + MediaStore.Files.FileColumns.PARENT;
 
-    public static void getFolders(Context context) {
+    public static List<Folder> getFolders(Context context) {
         Cursor cursor = getMusicResolver(context).query(MediaStore.Files.getContentUri("external"), PRO_FOLDER, SEL_FOLDER, null, null);
-        while (cursor.moveToNext()) {
-            String folder = cursor.getString(0);
-            Log.i("folders", folder);
+        List<Folder> folders = getFoldersByCursor(cursor);
+        List<Song> songs = getSongList(context);
+        for (Folder f : folders) {
+            for (Song song : songs) {
+                if (song.getPath().contains(f.getPath())) f.setCount(f.getCount() + 1);//歌曲数加 1
+            }
         }
+        return folders;
     }
+
+    public static List<Folder> getFoldersByCursor(Cursor cursor) {
+        List<Folder> folders = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            Folder folder = new Folder();
+            String path = cursor.getString(0);
+            Log.i("path", path);
+            path = path.substring(0, path.lastIndexOf(File.separator));
+            folder.setPath(path);// storage/emulate/music
+            folder.setName(path.substring(path.lastIndexOf(File.separator) + 1));//music
+            Log.i("path", folder.toString());
+            folders.add(folder);
+        }
+        return folders;
+    }
+
+
 }

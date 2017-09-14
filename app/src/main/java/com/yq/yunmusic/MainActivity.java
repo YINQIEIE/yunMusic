@@ -53,9 +53,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init();
+    }
+
+    @Override
+    protected void setTheme() {
         StatusBarUtil.setColorNoTranslucentForDrawerLayout(this, drawer,
                 getResources().getColor(R.color.themeColor));
-        init();
     }
 
     private void init() {
