@@ -1,35 +1,20 @@
 package com.yq.yunmusic.fragments;
 
-import android.widget.TextView;
-
 import com.yq.yunmusic.R;
-import com.yq.yunmusic.base.BaseListFragment;
+import com.yq.yunmusic.base.BaseNavListFragment;
 import com.yq.yunmusic.entity.Song;
 import com.yq.yunmusic.utils.MusicUtil;
-import com.yq.yunmusic.view.SideNavigationView;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
 import java.util.List;
-
-import butterknife.BindView;
 
 /**
  * Created by yinqi on 2017/9/12.
  * 本地音乐列表界面
  */
 
-public class LocalSongsFragment extends BaseListFragment<Song> {
-
-    @BindView(R.id.side_nav)
-    SideNavigationView side_nav;
-    @BindView(R.id.tv_nav)
-    TextView tvNav;
-
-    @Override
-    protected int getLayoutId() {
-        return R.layout.layout_list_with_side_nav;
-    }
+public class LocalSongsFragment extends BaseNavListFragment<Song> {
 
     @Override
     protected void initAdapter() {
@@ -41,7 +26,6 @@ public class LocalSongsFragment extends BaseListFragment<Song> {
             }
         };
 
-        side_nav.setTv(tvNav);
     }
 
     @Override
@@ -51,6 +35,10 @@ public class LocalSongsFragment extends BaseListFragment<Song> {
 
     @Override
     protected void onResult(List<Song> result) {
+        for (int i = 0; i < result.size(); i++) {
+            if (charMap.get(result.get(i).getFirstChar()) == null)
+                charMap.put(result.get(i).getFirstChar(), i);
+        }
         datas.addAll(result);
         adapter.notifyDataSetChanged();
     }

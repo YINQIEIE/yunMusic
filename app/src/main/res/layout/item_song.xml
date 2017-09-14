@@ -32,10 +32,10 @@
     <ImageView
         android:id="@+id/iv_info"
         android:layout_width="30dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="30dp"
         android:scaleType="center"
         android:src="@mipmap/icon_list_item_more" />
 

@@ -4,7 +4,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
 import com.yq.yunmusic.R;
-import com.yq.yunmusic.base.BaseListFragment;
+import com.yq.yunmusic.base.BaseNavListFragment;
 import com.yq.yunmusic.entity.Artist;
 import com.yq.yunmusic.entity.DetaisInfo;
 import com.yq.yunmusic.utils.MusicUtil;
@@ -18,7 +18,7 @@ import java.util.List;
  * 我的音乐 -> 歌手界面
  */
 
-public class LocalArtistFragment extends BaseListFragment<Artist> {
+public class LocalArtistFragment extends BaseNavListFragment<Artist> {
 
     @Override
     protected void initAdapter() {

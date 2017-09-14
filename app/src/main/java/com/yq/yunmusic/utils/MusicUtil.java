@@ -7,6 +7,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Media;
 import android.util.Log;
 
+import com.github.promeg.pinyinhelper.Pinyin;
 import com.yq.yunmusic.entity.Album;
 import com.yq.yunmusic.entity.Artist;
 import com.yq.yunmusic.entity.Folder;
@@ -108,6 +109,7 @@ public class MusicUtil {
                 song.setAlbum(cursor.getString(cursor.getColumnIndex(Media.ALBUM)));
                 song.setSize(cursor.getInt(cursor.getColumnIndex(Media.SIZE)));
                 song.setPath(cursor.getString(cursor.getColumnIndex(Media.DATA)));
+                song.setFirstChar(Pinyin.toPinyin(song.getSongName().charAt(0)).substring(0, 1).toUpperCase());
                 songs.add(song);
             }
             return songs;

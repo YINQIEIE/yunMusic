@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -51,9 +52,10 @@ public class SideNavigationView extends View {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setStrokeWidth(8);
         mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setTypeface(Typeface.DEFAULT);
         mPaint.setAntiAlias(true);
         mPaint.setTextAlign(Paint.Align.CENTER);
-        mPaint.setTextSize(30);
+        mPaint.setTextSize(getResources().getDimensionPixelSize(R.dimen.side_nav_text_size));
     }
 
     @Override
@@ -67,22 +69,24 @@ public class SideNavigationView extends View {
     public boolean onTouchEvent(MotionEvent event) {
 
         float touchY = event.getY();
+        touchPos = getPosition(touchY);
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (null != tv)
                     tv.setVisibility(VISIBLE);
                 if (null != mListener)
-                    mListener.onTouch(getPosition(touchY));
+                    mListener.onTouch(touchPos, items[touchPos]);
                 return true;
 
             case MotionEvent.ACTION_MOVE:
-                touchPos = getPosition(touchY);
-                if (null != tv)
-                    tv.setText(items[touchPos]);
                 invalidate();
 
+                if (null != tv)
+                    tv.setText(items[touchPos]);
+
                 if (null != mListener)
-                    mListener.onMoving(getPosition(touchY));
+                    mListener.onMoving(touchPos, items[touchPos]);
                 return true;
 
             case MotionEvent.ACTION_UP:
@@ -118,17 +122,17 @@ public class SideNavigationView extends View {
         tv.setVisibility(GONE);
     }
 
-    private OnGestureListener mListener;
+    private GestureListener mListener;
 
-    public void setMovingListener(OnGestureListener mListener) {
+    public void setMovingListener(GestureListener mListener) {
         this.mListener = mListener;
     }
 
-    public interface OnGestureListener {
+    public interface GestureListener {
 
-        void onMoving(int pos);
+        void onMoving(int pos, String s);
 
-        void onTouch(int pos);
+        void onTouch(int pos, String s);
     }
 
 

@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.yq.yunmusic.R;
-import com.yq.yunmusic.base.BaseListFragment;
+import com.yq.yunmusic.base.BaseNavListFragment;
 import com.yq.yunmusic.entity.Album;
 import com.yq.yunmusic.entity.DetaisInfo;
 import com.yq.yunmusic.utils.BitmapHelper;
@@ -22,7 +22,7 @@ import java.util.List;
  * 本地音乐列表界面
  */
 
-public class LocalAlbumFragment extends BaseListFragment<Album> {
+public class LocalAlbumFragment extends BaseNavListFragment<Album> {
 
     @Override
     protected void initAdapter() {

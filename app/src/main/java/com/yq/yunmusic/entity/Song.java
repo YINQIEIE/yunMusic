@@ -4,7 +4,7 @@ package com.yq.yunmusic.entity;
  * Created by yinqi on 2017/9/11.
  */
 
-public class Song {
+public class Song extends SortBase {
 
     private int songId;//歌曲id
     private String songName;//歌曲名称
@@ -103,6 +103,7 @@ public class Song {
                 ", album='" + album + '\'' +
                 ", size=" + size +
                 ", path='" + path + '\'' +
+                ", firstChar=" + firstChar +
                 '}';
     }
 }

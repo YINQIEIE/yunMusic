@@ -32,4 +32,5 @@ dependencies {
     compile 'com.android.support:support-v4:26.+'
     compile 'com.zhy:base-rvadapter:3.0.3'
     testCompile 'junit:junit:4.12'
+    compile 'com.github.promeg:tinypinyin:2.0.3'
 }
