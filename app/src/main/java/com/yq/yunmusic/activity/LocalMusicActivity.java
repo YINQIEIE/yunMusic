@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,10 +13,10 @@ import com.yq.yunmusic.R;
 import com.yq.yunmusic.adapter.MyFragmentAdapter;
 import com.yq.yunmusic.base.BaseActivity;
 import com.yq.yunmusic.base.BaseListFragment;
-import com.yq.yunmusic.fragments.AlbumTabFragment;
-import com.yq.yunmusic.fragments.ArtistTabFragment;
-import com.yq.yunmusic.fragments.FolderTabFragment;
-import com.yq.yunmusic.fragments.SongsTabFragment;
+import com.yq.yunmusic.fragments.LocalAlbumFragment;
+import com.yq.yunmusic.fragments.LocalArtistFragment;
+import com.yq.yunmusic.fragments.LocalFolderFragment;
+import com.yq.yunmusic.fragments.LocalSongsFragment;
 import com.yq.yunmusic.statusbar.StatusBarUtil;
 
 import java.util.ArrayList;
@@ -53,17 +54,24 @@ public class LocalMusicActivity extends BaseActivity {
         actionBar.setHomeAsUpIndicator(R.drawable.actionbar_back);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         tvTitle.setText("我的音乐");
 
-        fragments.add(new SongsTabFragment());
-        fragments.add(new ArtistTabFragment());
-        fragments.add(new AlbumTabFragment());
-        fragments.add(new FolderTabFragment());
+        fragments.add(new LocalSongsFragment());
+        fragments.add(new LocalArtistFragment());
+        fragments.add(new LocalAlbumFragment());
+        fragments.add(new LocalFolderFragment());
 
         adapter = new MyFragmentAdapter(getSupportFragmentManager(), fragments, titles);
         vpLocal.setOffscreenPageLimit(fragments.size() - 1);
         vpLocal.setAdapter(adapter);
+        vpLocal.setCurrentItem(getIntent().getIntExtra("position", 0));
         tabLayout.setupWithViewPager(vpLocal);
     }
 
