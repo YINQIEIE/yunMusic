@@ -41,7 +41,8 @@ public abstract class BaseNavListFragment<T> extends BaseListFragment<T> {
 
             @Override
             public void onTouch(int pos, String s) {
-//                recyclerView.scrollToPosition(charMap.get(s));
+                if (null != charMap.get(s))
+                    recyclerView.scrollToPosition(charMap.get(s));
             }
         });
     }

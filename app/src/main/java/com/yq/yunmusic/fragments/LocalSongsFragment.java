@@ -8,6 +8,7 @@ import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by yinqi on 2017/9/12.
@@ -33,11 +34,17 @@ public class LocalSongsFragment extends BaseNavListFragment<Song> {
         return MusicUtil.getSongList(getActivity());
     }
 
+    Pattern pattern = Pattern.compile("^[a-zA-Z]");
+
     @Override
     protected void onResult(List<Song> result) {
         for (int i = 0; i < result.size(); i++) {
-            if (charMap.get(result.get(i).getFirstChar()) == null)
-                charMap.put(result.get(i).getFirstChar(), i);
+            if (charMap.get(result.get(i).getFirstChar()) == null) {
+                if (pattern.matcher(result.get(i).getFirstChar()).matches())
+                    charMap.put(result.get(i).getFirstChar(), i);
+                else
+                    charMap.put("#", i);
+            }
         }
         datas.addAll(result);
         adapter.notifyDataSetChanged();

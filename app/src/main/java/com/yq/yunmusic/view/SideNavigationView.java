@@ -24,7 +24,7 @@ public class SideNavigationView extends View {
             "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
             "W", "X", "Y", "Z", "#"};
 
-    int itemHeight = 30;//最小高度 40 px
+    int itemHeight = 30;//最小高度 30 px
     private Paint mPaint;
     private int touchPos = -1;//触摸位置
     private TextView tv;
@@ -73,8 +73,11 @@ public class SideNavigationView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (null != tv)
+                invalidate();
+                if (null != tv) {
+                    tv.setText(items[touchPos]);
                     tv.setVisibility(VISIBLE);
+                }
                 if (null != mListener)
                     mListener.onTouch(touchPos, items[touchPos]);
                 return true;
@@ -97,6 +100,12 @@ public class SideNavigationView extends View {
         return super.onTouchEvent(event);
     }
 
+    /**
+     * 根据触摸位置计算对应的点击索引
+     *
+     * @param touchY
+     * @return
+     */
     private int getPosition(float touchY) {
         if (touchY < 10) return 0;
         int y = (int) touchY - 10;
