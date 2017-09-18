@@ -92,7 +92,7 @@ public class MusicUtil {
     }
 
 
-    private static final String exp = " [^(a-zA-Z\\u4e00-\\u9fa5)]";
+    private static final String exp = "[^(a-zA-Z\\u4e00-\\u9fa5)]";
 
     public static List<Song> getSongListByCursor(Cursor cursor) {
         try {
@@ -102,6 +102,7 @@ public class MusicUtil {
                 Song song = new Song();
                 song.setSongId(cursor.getInt(cursor.getColumnIndex(Media._ID)));
                 song.setSongName(cursor.getString(cursor.getColumnIndex(Media.TITLE)));
+                Log.i("name", cursor.getString(cursor.getColumnIndex(Media.TITLE)).replaceAll(exp, ""));
                 song.setArtistId(cursor.getInt(cursor.getColumnIndex(Media.ARTIST_ID)));
                 song.setArtist(cursor.getString(cursor.getColumnIndex(Media.ARTIST)));
                 song.setDuration(cursor.getInt(cursor.getColumnIndex(Media.DURATION)));
@@ -152,6 +153,7 @@ public class MusicUtil {
                 artist.setId(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Artists._ID)));
                 artist.setName(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.ARTIST)));
                 artist.setCount(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS)));
+                artist.setFirstChar(Pinyin.toPinyin(artist.getName().charAt(0)).substring(0, 1).toUpperCase());
                 artists.add(artist);
             }
             return artists;
@@ -199,6 +201,7 @@ public class MusicUtil {
             album.setAlbum_art(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)));
             album.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST)));
             album.setCount(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS)));
+            album.setFirstChar(Pinyin.toPinyin(album.getName().charAt(0)).substring(0, 1).toUpperCase());
             albums.add(album);
         }
         cursor.close();

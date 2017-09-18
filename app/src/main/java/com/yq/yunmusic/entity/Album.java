@@ -4,7 +4,7 @@ package com.yq.yunmusic.entity;
  * Created by yinqi on 2017/9/13.
  */
 
-public class Album {
+public class Album extends SortBase {
 
     private int id;// row id
     private String name;//专辑名称

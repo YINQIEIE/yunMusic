@@ -24,7 +24,7 @@ public class LocalMusicActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new LocalMusicFragment();
-        transaction.add(R.id.fl_content, fragment, "local").commit();
+        transaction.add(R.id.fl_content, fragment, "local").commitAllowingStateLoss();
 
     }
 

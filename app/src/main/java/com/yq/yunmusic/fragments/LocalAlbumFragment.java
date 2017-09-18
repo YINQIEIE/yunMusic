@@ -10,11 +10,13 @@ import com.yq.yunmusic.R;
 import com.yq.yunmusic.base.BaseNavListFragment;
 import com.yq.yunmusic.entity.Album;
 import com.yq.yunmusic.entity.DetaisInfo;
+import com.yq.yunmusic.entity.OrderComparator;
 import com.yq.yunmusic.utils.BitmapHelper;
 import com.yq.yunmusic.utils.MusicUtil;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -61,6 +63,11 @@ public class LocalAlbumFragment extends BaseNavListFragment<Album> {
 
     @Override
     protected void onResult(List<Album> result) {
+        Collections.sort(result, new OrderComparator<Album>());
+        for (int i = 0; i < result.size(); i++) {
+            if (charMap.get(result.get(i).getFirstChar()) == null)
+                charMap.put(result.get(i).getFirstChar(), i);
+        }
         datas.addAll(result);
         adapter.notifyDataSetChanged();
     }

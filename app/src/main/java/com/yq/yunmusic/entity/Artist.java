@@ -3,7 +3,7 @@ package com.yq.yunmusic.entity;
 /**
  * 歌手信息类
  */
-public class Artist {
+public class Artist extends SortBase {
 
     private int id;//ID
     private String name;//歌手名字
@@ -35,10 +35,12 @@ public class Artist {
 
     @Override
     public String toString() {
-        return "Artist{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", count=" + count +
-                '}';
+        final StringBuilder sb = new StringBuilder("Artist{");
+        sb.append("id=").append(id);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", count=").append(count);
+        sb.append(", firstChar=").append(firstChar);
+        sb.append('}');
+        return sb.toString();
     }
 }

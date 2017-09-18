@@ -18,11 +18,13 @@ import butterknife.BindView;
 
 /**
  * Created by yinqi on 2017/9/14.
+ * 点击歌手、专辑、文件夹显示具体包含歌曲信息界面
  */
 
 public class LocalDetaisFragment extends LocalSongsFragment {
 
     public static final String INFO = "info";
+    private DetaisInfo info;
 
     public static LocalDetaisFragment newInstance(DetaisInfo info) {
         LocalDetaisFragment fragment = new LocalDetaisFragment();
@@ -54,20 +56,20 @@ public class LocalDetaisFragment extends LocalSongsFragment {
                 mContext.onBackPressed();
             }
         });
+        info = (DetaisInfo) getArguments().getSerializable(INFO);
+        toolbar.setTitle(info.getTitle());
         super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
     protected List<Song> doInBackgroud() {
-        DetaisInfo info = (DetaisInfo) getArguments().getSerializable(INFO);
         int type = info.getType();
         String param = info.getParam();
-        toolbar.setTitle(info.getTitle());
-        if (type == 1)
+        if (type == 1)//歌手
             return MusicUtil.getSongsByArtistId(mContext, Integer.parseInt(param));
-        else if (type == 2)
+        else if (type == 2)//专辑
             return MusicUtil.getSongsByAlbumId(mContext, Integer.parseInt(param));
-        else
+        else//文件夹
             return MusicUtil.getSongsByFilePath(mContext, param);
     }
 

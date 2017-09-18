@@ -2,10 +2,13 @@ package com.yq.yunmusic.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
 import com.yq.yunmusic.R;
+import com.yq.yunmusic.entity.SortBase;
 import com.yq.yunmusic.view.SideNavigationView;
 
 import java.util.HashMap;
@@ -14,7 +17,7 @@ import java.util.Map;
 import butterknife.BindView;
 
 
-public abstract class BaseNavListFragment<T> extends BaseListFragment<T> {
+public abstract class BaseNavListFragment<T extends SortBase> extends BaseListFragment<T> {
 
     @BindView(R.id.side_nav)
     SideNavigationView side_nav;
@@ -35,7 +38,8 @@ public abstract class BaseNavListFragment<T> extends BaseListFragment<T> {
             @Override
             public void onMoving(int pos, String s) {
                 if (null != charMap.get(s)) {
-                    recyclerView.scrollToPosition(charMap.get(s));
+//                    recyclerView.scrollToPosition(charMap.get(s));
+                    ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(charMap.get(s), 0);
                 }
             }
 
@@ -43,6 +47,17 @@ public abstract class BaseNavListFragment<T> extends BaseListFragment<T> {
             public void onTouch(int pos, String s) {
                 if (null != charMap.get(s))
                     recyclerView.scrollToPosition(charMap.get(s));
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int firstVisiblePosition = linearLayoutManager.findFirstVisibleItemPosition();
+                String firstChar = datas.get(firstVisiblePosition).getFirstChar();
+                if (null != firstChar)
+                    side_nav.setNowChar(firstChar);
             }
         });
     }

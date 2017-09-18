@@ -144,5 +144,15 @@ public class SideNavigationView extends View {
         void onTouch(int pos, String s);
     }
 
+    public void setNowChar(String c) {
+        touchPos = -1;
+        for (int i = 0; i < items.length; i++) {
+            if (c.equals(items[i])) {
+                touchPos = i;
+                break;
+            }
+        }
+        invalidate();
+    }
 
 }

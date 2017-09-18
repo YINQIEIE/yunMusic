@@ -16,10 +16,4 @@ public class SortBase {
         this.firstChar = firstChar;
     }
 
-    @Override
-    public String toString() {
-        return "SortBase{" +
-                "firstChar='" + firstChar + '\'' +
-                '}';
-    }
 }
