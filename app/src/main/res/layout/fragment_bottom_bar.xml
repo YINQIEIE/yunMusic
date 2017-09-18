@@ -72,7 +72,6 @@
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:scaleType="center"
                 android:src="@mipmap/playbar_btn_play" />
 
             <ImageView
