@@ -25,21 +25,24 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             android:gravity="center|left"
             android:orientation="vertical"
             android:paddingLeft="10dp">
 
             <TextView
+                android:id="@+id/tv_song_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:marqueeRepeatLimit="marquee_forever"
+                android:gravity="center|left"
+                android:marqueeRepeatLimit="1"
                 android:singleLine="true"
-                android:text="名称名称名称称名称名称132254名称名称名称名称名称称名称名称名称名称名称名称"
+                android:text="权御天下"
                 android:textColor="@color/textBlack"
                 android:textSize="14sp" />
 
@@ -48,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center|left"
-                android:text="名称"
+                android:text="洛天依"
                 android:textColor="@color/sideNavColor"
                 android:textSize="10sp" />
 
@@ -62,17 +65,18 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:src="@mipmap/playbar_btn_playlist" />
 
             <ImageView
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
+                android:scaleType="center"
                 android:src="@mipmap/playbar_btn_play" />
 
             <ImageView
-                android:layout_width="40dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:src="@mipmap/playbar_btn_next" />
 

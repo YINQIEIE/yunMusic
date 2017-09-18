@@ -47,7 +47,7 @@ public class LocalDetaisFragment extends LocalSongsFragment {
         StatusBarUtil.setColorNoTranslucent(getActivity(), getResources().getColor(R.color.themeColor));
         mContext.setSupportActionBar(toolbar);
         ActionBar actionBar = mContext.getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.actionbar_back);
+        actionBar.setHomeAsUpIndicator(R.mipmap.actionbar_back);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
