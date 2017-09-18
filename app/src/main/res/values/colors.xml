@@ -8,4 +8,7 @@
     <color name="tabColorLocalMusic">#CC333333</color>
     <color name="themeColor">#FFCE3D3A</color>
     <color name="grayLight">#40CCCCCC</color>
+
+    <color name="textBlack">#cc333333</color>
+
 </resources>

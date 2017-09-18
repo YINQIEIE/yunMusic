@@ -4,6 +4,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -11,12 +12,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.yq.yunmusic.adapter.MyFragmentAdapter;
 import com.yq.yunmusic.base.BaseActivity;
 import com.yq.yunmusic.base.BaseFragment;
+import com.yq.yunmusic.fragments.BottomBarFragment;
 import com.yq.yunmusic.fragments.LocalFragment;
 import com.yq.yunmusic.fragments.SongsFragment;
 import com.yq.yunmusic.statusbar.StatusBarUtil;
@@ -42,6 +45,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     ViewPager viewpager;
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;
+    @BindView(R.id.bottom_bar)
+    FrameLayout bottomBar;
+
     private MyFragmentAdapter adapter;
     private View headerView;
 
@@ -88,6 +94,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         viewpager.setAdapter(adapter);
         viewpager.setOffscreenPageLimit(fragments.size() - 1);
         tabLayout.setupWithViewPager(viewpager);
+
+        addBottomBar();
+    }
+
+    protected void addBottomBar() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.bottom_bar, new BottomBarFragment()).commit();
     }
 
     @Override
