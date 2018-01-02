@@ -13,7 +13,6 @@ import butterknife.BindView;
 
 public class LocalMusicActivity extends BaseActivity {
 
-
     @BindView(R.id.fl_content)
     FrameLayout flContent;
     @BindView(R.id.fl_bottom_bar)
@@ -24,7 +23,7 @@ public class LocalMusicActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment = new LocalMusicFragment();
-        transaction.add(R.id.fl_content, fragment, "local").commitAllowingStateLoss();
+        transaction.add(R.id.fl_content, fragment, "local").commit();
 
     }
 
