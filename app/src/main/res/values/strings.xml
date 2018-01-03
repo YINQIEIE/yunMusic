@@ -13,6 +13,14 @@
         <item>唱歌</item>
     </string-array>
 
+    <!--第二页标题-->
+    <string-array name="titles_gank">
+        <item>每日推荐</item>
+        <item>福利</item>
+        <item>干货定制</item>
+        <item>大安卓</item>
+    </string-array>
+
     <!--本地音乐标题-->
     <string-array name="titles_local_music">
         <item>单曲</item>
@@ -26,5 +34,8 @@
     <string name="recent_play">最近播放</string>
     <string name="download_manage">下载管理</string>
     <string name="artist">我的歌手</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

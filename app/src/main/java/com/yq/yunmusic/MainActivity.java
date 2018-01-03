@@ -4,7 +4,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -19,7 +18,7 @@ import android.widget.LinearLayout;
 import com.yq.yunmusic.adapter.MyFragmentAdapter;
 import com.yq.yunmusic.base.BaseActivity;
 import com.yq.yunmusic.base.BaseFragment;
-import com.yq.yunmusic.fragments.BottomBarFragment;
+import com.yq.yunmusic.fragments.GankFragment;
 import com.yq.yunmusic.fragments.LocalFragment;
 import com.yq.yunmusic.fragments.SongsFragment;
 import com.yq.yunmusic.statusbar.StatusBarUtil;
@@ -86,7 +85,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void initViewPager() {
         List<BaseFragment> fragments = new ArrayList<>();
         fragments.add(new LocalFragment());
-        for (int i = 1; i < 4; i++) {
+        fragments.add(new GankFragment());
+        for (int i = 1; i < 3; i++) {
             fragments.add(new SongsFragment());
         }
         adapter = new MyFragmentAdapter(getSupportFragmentManager(), fragments, titles);
@@ -99,8 +99,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     protected void addBottomBar() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.bottom_bar, new BottomBarFragment()).commit();
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        transaction.add(R.id.bottom_bar, new BottomBarFragment()).commit();
     }
 
     @Override

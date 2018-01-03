@@ -3,6 +3,7 @@
     package="com.yq.yunmusic">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -25,6 +26,10 @@
             android:name=".activity.LocalMusicActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <service
+            android:name=".media.MusicService"
+            android:enabled="false"
+            android:exported="false"></service>
     </application>
 
 </manifest>

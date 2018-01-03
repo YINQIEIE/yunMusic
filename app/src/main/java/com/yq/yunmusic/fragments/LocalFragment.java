@@ -55,8 +55,8 @@ public class LocalFragment extends BaseFragment {
         infos.add(new LocalInfo("我的歌单", 0, 0));
         infos.add(new LocalInfo("我的收藏歌单", 0, 0));
 
+        //几个 title
         multiAdapter = new MultiItemTypeAdapter(getActivity(), infos);
-        //我的歌单
         multiAdapter.addItemViewDelegate(new LocalDelegateOne());
 
         //我的歌单具体信息设置
