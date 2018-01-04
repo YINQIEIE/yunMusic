@@ -30,6 +30,6 @@ public abstract class BaseViewHolder extends RecyclerView.ViewHolder {
     }
 
     protected void displayRandomImg(int imgNumber, int position, ImageView imageView, List<GankBean.ResultBean> object) {
-        ImgLoadUtil.displayRandom(imgNumber, object.get(position).getUrl(), imageView);
+        ImgLoadUtil.displayRandom(imgNumber, object.get(position).getImageUrl(), imageView);
     }
 }

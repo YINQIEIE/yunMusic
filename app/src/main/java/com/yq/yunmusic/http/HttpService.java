@@ -12,6 +12,8 @@ import retrofit2.http.Path;
 
 public interface HttpService {
 
+    @GET("ting?from=android&version=5.8.1.0&channel=ppzs&operator=3&method=baidu.ting.plaza.index&cuid=89CF1E1A06826F9AB95A34DC0F6AAA14")
+    Call getBannerUrls();
     /**
      * 每日数据： http://gank.io/api/day/年/月/日
      * eg:http://gank.io/api/day/2015/08/06

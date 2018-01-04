@@ -1,9 +1,8 @@
 package com.yq.yunmusic.adapter.viewholder;
 
-import android.content.Context;
-import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -38,13 +37,13 @@ public class TitleHolder extends BaseViewHolder {
     @BindView(R.id.ll)
     LinearLayout ll;
 
-    public TitleHolder(Context mContext, @LayoutRes int resId) {
-        super(LayoutInflater.from(mContext).inflate(R.layout.item_everyday_title, null));
+    public TitleHolder(ViewGroup viewGroup) {
+        super(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_everyday_title, null));
     }
 
     public void onBindViewHolder(List<GankBean.ResultBean> list, int position) {
         int index = 0;
-        String title = "test";
+        String title = list.get(0).getName();
         tvTitleType.setText(title);
         if ("Android".equals(title)) {
             ivTitleType.setImageDrawable(CommonUtils.getDrawable(R.drawable.home_title_android));

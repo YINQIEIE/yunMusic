@@ -11,6 +11,8 @@ import android.view.ViewParent;
 import android.view.WindowManager;
 
 
+import com.yq.yunmusic.base.MyApplication;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -67,7 +69,7 @@ public class CommonUtils {
     }
 
     public static Resources getResoure() {
-        return null;
+        return MyApplication.getInstance().getResources();
     }
 
     public static String[] getStringArray(int resid) {

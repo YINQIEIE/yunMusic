@@ -1,9 +1,8 @@
 package com.yq.yunmusic.adapter.viewholder;
 
-import android.content.Context;
-import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,8 +30,8 @@ public class ItemOneHolder extends BaseViewHolder {
     @BindView(R.id.ll_one_photo)
     LinearLayout llOnePhoto;
 
-    public ItemOneHolder(Context mContext, @LayoutRes int resId) {
-        super(LayoutInflater.from(mContext).inflate(R.layout.item_everyday_one, null));
+    public ItemOneHolder(ViewGroup viewGroup) {
+        super(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_everyday_one, viewGroup, false));
     }
 
     @Override
@@ -40,7 +39,7 @@ public class ItemOneHolder extends BaseViewHolder {
         if ("福利".equals(list.get(0).getType())) {
             tvOnePhotoTitle.setVisibility(View.GONE);
             ivOnePhoto.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//                ImgLoadUtil.displayEspImage(object.get(0).getUrl(), ivOnePhoto, 1);
+//            ImgLoadUtil.displayEspImage(list.get(0).getUrl(), ivOnePhoto, 1);
             Glide.with(ivOnePhoto.getContext())
                     .load(list.get(0).getUrl())
                     .crossFade(1500)

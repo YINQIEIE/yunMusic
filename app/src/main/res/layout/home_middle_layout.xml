@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="35dp">
 
-                <LinearLayoute
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -39,7 +39,7 @@
                         android:text="干货闲读"
                         android:textColor="@color/colorContent"
                         android:textSize="12sp" />
-                </LinearLayoute>
+                </LinearLayout>
             </RelativeLayout>
 
             <RelativeLayout

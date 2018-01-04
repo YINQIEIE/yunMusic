@@ -1,8 +1,7 @@
 package com.yq.yunmusic.adapter.viewholder;
 
-import android.content.Context;
-import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,8 +35,8 @@ public class ItemTwoHolder extends BaseViewHolder {
     @BindView(R.id.ll_two_one)
     LinearLayout llTwoOne;
 
-    public ItemTwoHolder(Context mContext, @LayoutRes int resId) {
-        super(LayoutInflater.from(mContext).inflate(R.layout.item_everyday_two, null));
+    public ItemTwoHolder(ViewGroup viewGroup) {
+        super(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_everyday_two, viewGroup, false));
     }
 
     @Override

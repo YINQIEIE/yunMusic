@@ -15,7 +15,8 @@ public class RetrofitManager {
     private Retrofit retrofitNew = null;
     private static HttpService httpService;
 
-    public static final String GANK_URL = "http://gank.io/api/";
+    private static final String GANK_URL = "http://gank.io/api/";
+    private final static String API_TING = "https://tingapi.ting.baidu.com/v1/restserver/";
 
     public static RetrofitManager getInstance() {
         if (null == ourInstance)
@@ -40,15 +41,22 @@ public class RetrofitManager {
         return retrofitNew;
     }
 
-    public static Retrofit getGandRetrofit() {
+    public static Retrofit getGankRetrofit() {
         return new Retrofit.Builder()
                 .baseUrl(GANK_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 
+    public static Retrofit getBannerRetrofit() {
+        return new Retrofit.Builder()
+                .baseUrl(API_TING)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
     public static HttpService getGankHttpService() {
-        return getGandRetrofit().create(HttpService.class);
+        return getGankRetrofit().create(HttpService.class);
     }
 
 }

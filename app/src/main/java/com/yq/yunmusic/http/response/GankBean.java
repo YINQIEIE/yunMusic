@@ -62,6 +62,19 @@ public class GankBean {
         private boolean used;
         private String who;
 
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+
+        private String imageUrl;
+
+        public ResultBean() {
+        }
+
         public ResultBean(String name) {
             this.name = name;
         }

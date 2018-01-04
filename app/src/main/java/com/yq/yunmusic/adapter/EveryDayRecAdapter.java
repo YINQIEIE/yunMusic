@@ -8,7 +8,6 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.yq.yunmusic.R;
 import com.yq.yunmusic.adapter.viewholder.ItemOneHolder;
 import com.yq.yunmusic.adapter.viewholder.ItemThreeHolder;
 import com.yq.yunmusic.adapter.viewholder.ItemTwoHolder;
@@ -39,39 +38,42 @@ public class EveryDayRecAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
+        Log.i("getItemCount", data.size() + "");
 //        return mHeaderViews.size() > 0 ? data.size() + mHeaderViews.size() : data.size();
         return mHeaderViews.size() + data.size();//和上面等效
     }
 
     @Override
     public int getItemViewType(int position) {
+        int pos = position - mHeaderViews.size();
         if (mHeaderViews.size() > 0 && position < mHeaderViews.size()) return ItemType.TYPE_BANNER;
-        else if (!TextUtils.isEmpty(data.get(position).get(0).getName()))
+        else if (!TextUtils.isEmpty(data.get(pos).get(0).getName())) {
             return ItemType.TYPE_TITLE;
-        else if (data.get(position).size() == 1)
+        } else if (data.get(pos).size() == 1) {
             return ItemType.TYPE_ITEM_ONE;
-        else if (data.get(position).size() == 2)
+        } else if (data.get(pos).size() == 2) {
             return ItemType.TYPE_ITEM_TWO;
-        else if (data.get(position).size() == 3)
+        } else if (data.get(pos).size() == 3) {
             return ItemType.TYPE_ITEM_THREE;
-        return super.getItemViewType(position);
+        }
+        return super.getItemViewType(pos);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case ItemType.TYPE_BANNER:
-                return new SimpleViewHolder(mHeaderViews.get(headePos++));
+                return new SimpleViewHolder(mHeaderViews.get(++headePos));
             case ItemType.TYPE_TITLE:
-                return new TitleHolder(mContext, R.layout.item_everyday_title);
+                return new TitleHolder(parent);
             case ItemType.TYPE_ITEM_ONE:
-                return new ItemOneHolder(mContext, R.layout.item_everyday_one);
+                return new ItemOneHolder(parent);
             case ItemType.TYPE_ITEM_TWO:
-                return new ItemTwoHolder(mContext, R.layout.item_everyday_two);
+                return new ItemTwoHolder(parent);
             case ItemType.TYPE_ITEM_THREE:
-                return new ItemThreeHolder(mContext, R.layout.item_everyday_three);
+                return new ItemThreeHolder(parent);
             default:
-                return new SimpleViewHolder(mHeaderViews.get(headePos++));
+                return new SimpleViewHolder(mHeaderViews.get(++headePos));
         }
     }
 
@@ -79,7 +81,7 @@ public class EveryDayRecAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof SimpleViewHolder) return;
         else
-            ((BaseViewHolder) holder).onBindViewHolder(data.get(position), position);
+            ((BaseViewHolder) holder).onBindViewHolder(data.get(position - mHeaderViews.size()), position - mHeaderViews.size());
     }
 
     public interface ItemType {
