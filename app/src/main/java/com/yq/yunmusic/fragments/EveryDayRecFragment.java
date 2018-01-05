@@ -176,7 +176,12 @@ public class EveryDayRecFragment extends BaseLoadFragment {
             lists.add(list1);
             lists.add(list2);
         }
+        for (int i = 0; i < urlList.size(); i++) {
+            log(urlList.get(i));
+        }
     }
+
+    private List<String> urlList = new ArrayList<>();
 
     private List<GankBean.ResultBean> addUrlList(List<GankBean.ResultBean> arrayList, int androidSize) {
         List<GankBean.ResultBean> tempList = new ArrayList<>();
@@ -188,18 +193,36 @@ public class EveryDayRecFragment extends BaseLoadFragment {
             androidBean.setType(arrayList.get(i).getType());
             // 跳转链接
             androidBean.setUrl(arrayList.get(i).getUrl());
-//            DebugUtil.error("---androidSize:  " + androidSize);
             // 随机图的url
             if (androidSize == 1) {
-                androidBean.setImageUrl(ConstantsImageUrl.HOME_ONE_URLS[getRandom(1)]);//一图
+                androidBean.setImageUrl(getImageUrl(ConstantsImageUrl.HOME_ONE_URLS, 1));//一图
             } else if (androidSize == 2) {
-                androidBean.setImageUrl(ConstantsImageUrl.HOME_TWO_URLS[getRandom(2)]);//两图
+                androidBean.setImageUrl(getImageUrl(ConstantsImageUrl.HOME_TWO_URLS, 2));//两图
             } else if (androidSize == 3) {
-                androidBean.setImageUrl(ConstantsImageUrl.HOME_SIX_URLS[getRandom(3)]);//三图
+                androidBean.setImageUrl(getImageUrl(ConstantsImageUrl.HOME_SIX_URLS, 3));//三图
             }
             tempList.add(androidBean);
         }
         return tempList;
+    }
+
+    /**
+     * 获取随机位置的图片，去重复
+     *
+     * @param urls 图片集合
+     * @param type 图片类型
+     * @return
+     */
+    private String getImageUrl(String[] urls, int type) {
+        String url;
+        while (true) {
+            url = urls[getRandom(type)];
+            if (!urlList.contains(url)) {
+                urlList.add(url);
+                break;
+            }
+        }
+        return url;
     }
 
     private GankBean.ResultBean getAndroidBean(List<GankBean.ResultBean> arrayList, int i, int androidSize) {
