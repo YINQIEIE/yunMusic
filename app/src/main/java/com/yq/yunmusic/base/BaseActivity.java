@@ -1,5 +1,6 @@
 package com.yq.yunmusic.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity {
     protected final String TAG = this.getClass().getSimpleName();
+    private Intent intent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +40,23 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected void log(Object content) {
         Log.i(TAG, String.valueOf(content));
+    }
+
+    protected void starNewActivity(Class<?> clazz) {
+        intent.setClass(this, clazz);
+        startActivity(intent);
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent);
+        overridePendingTransition(R.anim.activity_right_in, R.anim.activity_left_out);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_left_in, R.anim.activity_right_out);
     }
 
 }

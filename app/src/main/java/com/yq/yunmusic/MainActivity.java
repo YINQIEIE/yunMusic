@@ -20,6 +20,7 @@ import com.yq.yunmusic.base.BaseActivity;
 import com.yq.yunmusic.base.BaseFragment;
 import com.yq.yunmusic.fragments.GankFragment;
 import com.yq.yunmusic.fragments.LocalFragment;
+import com.yq.yunmusic.fragments.MovieFragment;
 import com.yq.yunmusic.fragments.SongsFragment;
 import com.yq.yunmusic.statusbar.StatusBarUtil;
 import com.yq.yunmusic.utils.BitmapHelper;
@@ -86,7 +87,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         List<BaseFragment> fragments = new ArrayList<>();
         fragments.add(new LocalFragment());
         fragments.add(new GankFragment());
-        for (int i = 1; i < 3; i++) {
+        fragments.add(new MovieFragment());
+        for (int i = 1; i < 2; i++) {
             fragments.add(new SongsFragment());
         }
         adapter = new MyFragmentAdapter(getSupportFragmentManager(), fragments, titles);
@@ -134,4 +136,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void changeFragment(int index) {
+        viewpager.setCurrentItem(index);
+    }
+
 }

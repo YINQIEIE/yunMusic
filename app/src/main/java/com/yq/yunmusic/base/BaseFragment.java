@@ -10,6 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.yq.yunmusic.R;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -47,11 +50,6 @@ public abstract class BaseFragment extends Fragment {
         unbinder.unbind();
     }
 
-    protected void startNewActivity(Class<?> clazz) {
-        intent.setClass(getActivity(), clazz);
-        startActivity(intent);
-    }
-
     /**
      * 日志打印
      *
@@ -64,4 +62,15 @@ public abstract class BaseFragment extends Fragment {
     public void log(Object content) {
         log(String.valueOf(content));
     }
+
+    protected void showToast(String toast) {
+        Toast.makeText(getActivity(), toast, Toast.LENGTH_LONG).show();
+    }
+
+    protected void startNewActivity(Class<?> clazz) {
+        intent.setClass(getActivity(), clazz);
+        startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.activity_right_in, R.anim.activity_left_out);
+    }
+
 }

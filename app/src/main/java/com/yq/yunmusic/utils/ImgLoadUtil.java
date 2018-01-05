@@ -124,6 +124,13 @@ public class ImgLoadUtil {
                 .into(imageView);
     }
 
+    public static void displayImage(Context context, String url, ImageView imageView) {
+        Glide.with(context).load(url)
+                .placeholder(R.drawable.img_two_bi_one)
+                .error(R.drawable.img_two_bi_one)
+                .crossFade(1000)
+                .into(imageView);
+    }
 //    /**
 //     * 妹子，电影列表图
 //     *

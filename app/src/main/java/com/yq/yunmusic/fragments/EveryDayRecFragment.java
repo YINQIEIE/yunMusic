@@ -1,18 +1,31 @@
 package com.yq.yunmusic.fragments;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.youth.banner.Banner;
+import com.youth.banner.listener.OnBannerClickListener;
+import com.youth.banner.loader.ImageLoader;
+import com.yq.yunmusic.MainActivity;
 import com.yq.yunmusic.R;
+import com.yq.yunmusic.activity.WebViewActivity;
 import com.yq.yunmusic.adapter.EveryDayRecAdapter;
 import com.yq.yunmusic.base.BaseLoadFragment;
 import com.yq.yunmusic.http.RetrofitManager;
+import com.yq.yunmusic.http.response.BannerBean;
 import com.yq.yunmusic.http.response.GankBean;
 import com.yq.yunmusic.utils.ConstantsImageUrl;
+import com.yq.yunmusic.utils.ImgLoadUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +35,8 @@ import java.util.Map;
 import java.util.Random;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,8 +51,22 @@ public class EveryDayRecFragment extends BaseLoadFragment {
     RecyclerView rv;
 
     List<List<GankBean.ResultBean>> data;
+
+    //    @BindView(R.id.banner)
+    Banner banner;
+//    @BindView(R.id.tv_xiandu)
+//    TextView tvXiandu;
+//    @BindView(R.id.tv_date)
+//    TextView tvDate;
+//    @BindView(R.id.fl_everyday)
+//    FrameLayout flEveryday;
+//    @BindView(R.id.tv_movie)
+//    TextView tvMovie;
+
     private EveryDayRecAdapter gankAdapter;
     private List<String> orderList = Arrays.asList("Android", "福利", "iOS", "休息视频", "瞎推荐", "前端");
+    private View headerView;
+    private List<BannerBean.PicBean> bannerUrls;
 
     @Override
     protected int getLayoutId() {
@@ -46,28 +75,41 @@ public class EveryDayRecFragment extends BaseLoadFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        initHeaderView();
         data = new ArrayList<>();
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         gankAdapter = new EveryDayRecAdapter(getActivity(), data);
-        gankAdapter.addHeaderView(LayoutInflater.from(getActivity()).inflate(R.layout.header_item_everyday, null));
+        gankAdapter.addHeaderView(headerView);
         rv.setAdapter(gankAdapter);
+
+    }
+
+    private void initHeaderView() {
+//        headerView = LayoutInflater.from(getActivity()).inflate(R.layout.header_item_everyday, null);
+        HeaderViewHolder headerViewHolder = new HeaderViewHolder();
+        banner = headerViewHolder.banner;
 
     }
 
     @Override
     protected void getData() {
         getContent();
-        Call bannerCall = RetrofitManager.getGankHttpService().getBannerUrls();
-        bannerCall.enqueue(new Callback() {
+        Call<BannerBean> bannerCall = RetrofitManager.getBannerHttpService().getBannerUrls();
+        bannerCall.enqueue(new Callback<BannerBean>() {
             @Override
-            public void onResponse(Call call, Response response) {
-                String body = (String) response.body();
+            public void onResponse(Call<BannerBean> call, Response<BannerBean> response) {
+                BannerBean body = response.body();
+                bannerUrls = body.getPic();
                 log(body);
+                for (int i = 0; i < bannerUrls.size(); i++) {
+                    log(bannerUrls.get(i).getRandpic());
+                }
+                banner.setImages(bannerUrls).start();
             }
 
             @Override
-            public void onFailure(Call call, Throwable t) {
-
+            public void onFailure(Call<BannerBean> call, Throwable t) {
+                log("banner failed" + t.getMessage() + "\n" + t.getCause() + "/n" + t.getStackTrace());
             }
         });
     }
@@ -85,7 +127,6 @@ public class EveryDayRecFragment extends BaseLoadFragment {
         gankCall.enqueue(new Callback<GankBean>() {
             @Override
             public void onResponse(Call<GankBean> call, Response<GankBean> response) {
-                log("onResponse" + response.body().toString());
                 GankBean gankBean = response.body();
                 List<String> category = gankBean.getCategory();
                 Map<String, List<GankBean.ResultBean>> map = gankBean.getResults();
@@ -95,10 +136,6 @@ public class EveryDayRecFragment extends BaseLoadFragment {
                     groupName = orderList.get(i);
                     List<GankBean.ResultBean> list = map.get(groupName);
                     addUrlList(data, list, groupName);
-                    log("group is " + groupName + "size is " + list.size());
-                    for (int j = 0; j < list.size(); j++) {
-                        log(list.get(j).toString());
-                    }
                 }
                 gankAdapter.notifyDataSetChanged();
             }
@@ -113,8 +150,6 @@ public class EveryDayRecFragment extends BaseLoadFragment {
 
     // subList没有实现序列化！缓存时会出错！
     private void addUrlList(List<List<GankBean.ResultBean>> lists, List<GankBean.ResultBean> arrayList, String typeTitle) {
-        // title
-        log("addUrlList title >>> " + typeTitle);
         GankBean.ResultBean bean = new GankBean.ResultBean();
         bean.setName(typeTitle);
         ArrayList<GankBean.ResultBean> androidBeen = new ArrayList<>();
@@ -189,13 +224,6 @@ public class EveryDayRecFragment extends BaseLoadFragment {
         return resultBean;
     }
 
-    /**
-     * 取不同的随机图，在每次网络请求时重置
-     */
-    private static final String HOME_ONE = "home_one";
-    private static final String HOME_TWO = "home_two";
-    private static final String HOME_SIX = "home_six";
-
     private int getRandom(int type) {
         int urlLength = 0;
         if (type == 1) {
@@ -210,5 +238,72 @@ public class EveryDayRecFragment extends BaseLoadFragment {
         int randomInt = random.nextInt(urlLength);
         return randomInt;
     }
+
+    protected class HeaderViewHolder {
+
+        @BindView(R.id.banner)
+        Banner banner;
+        @BindView(R.id.tv_xiandu)
+        TextView tvXiandu;
+        @BindView(R.id.tv_date)
+        TextView tvDate;
+        @BindView(R.id.fl_everyday)
+        FrameLayout flEveryday;
+        @BindView(R.id.tv_movie)
+        TextView tvMovie;
+
+        public HeaderViewHolder() {
+            headerView = LayoutInflater.from(getActivity()).inflate(R.layout.header_item_everyday, null);
+            ButterKnife.bind(this, headerView);
+            initBanner();
+            setDate();
+        }
+
+        private void initBanner() {
+            banner.setDelayTime(4000);
+            banner.setImageLoader(new ImageLoader() {
+                @Override
+                public void displayImage(Context context, Object path, ImageView imageView) {
+                    log(((BannerBean.PicBean) path).getRandpic());
+                    ImgLoadUtil.displayImage(context, ((BannerBean.PicBean) path).getRandpic(), imageView);
+                }
+            });
+            banner.setOnBannerClickListener(new OnBannerClickListener() {
+                @Override
+                public void OnBannerClick(int position) {
+                    String detailUrl = bannerUrls.get(position).getCode();
+                    if (TextUtils.isEmpty(detailUrl)) {
+                        showToast("暂无详情~");
+                        return;
+                    }
+                    Intent intent = new Intent(getActivity(), WebViewActivity.class);
+                    intent.putExtra("url", detailUrl);
+                    startActivity(intent);
+                }
+            });
+        }
+
+        private void setDate() {
+            tvDate.setText(String.valueOf(Calendar.getInstance().get(Calendar.DATE)));
+        }
+
+        @OnClick({R.id.tv_xiandu, R.id.fl_everyday, R.id.tv_movie})
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.tv_xiandu:
+                    intent = new Intent();
+                    intent.putExtra("url", "https://gank.io/xiandu");
+                    startNewActivity(WebViewActivity.class);
+                    break;
+                case R.id.fl_everyday:
+                    break;
+                case R.id.tv_movie:
+                    ((MainActivity) getActivity()).changeFragment(2);
+                    break;
+
+            }
+        }
+    }
+
 
 }

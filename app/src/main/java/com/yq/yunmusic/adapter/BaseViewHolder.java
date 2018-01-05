@@ -1,10 +1,15 @@
 package com.yq.yunmusic.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.yq.yunmusic.activity.WebViewActivity;
 import com.yq.yunmusic.http.response.GankBean;
 import com.yq.yunmusic.utils.ImgLoadUtil;
 
@@ -18,8 +23,12 @@ import butterknife.ButterKnife;
 
 public abstract class BaseViewHolder extends RecyclerView.ViewHolder {
 
+    private Context mContext;
+    protected List<GankBean.ResultBean> list;
+
     public BaseViewHolder(View itemView) {
         super(itemView);
+        mContext = itemView.getContext();
         ButterKnife.bind(this, itemView);
     }
 
@@ -32,4 +41,16 @@ public abstract class BaseViewHolder extends RecyclerView.ViewHolder {
     protected void displayRandomImg(int imgNumber, int position, ImageView imageView, List<GankBean.ResultBean> object) {
         ImgLoadUtil.displayRandom(imgNumber, object.get(position).getImageUrl(), imageView);
     }
+
+    protected void goToDetails(String url) {
+        if (TextUtils.isEmpty(url)) {
+            Toast.makeText(mContext, "暂无详情~", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = new Intent(mContext, WebViewActivity.class);
+        intent.putExtra("url", url);
+        mContext.startActivity(intent);
+    }
+
+
 }
