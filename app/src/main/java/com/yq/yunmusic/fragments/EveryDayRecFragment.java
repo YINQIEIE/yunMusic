@@ -294,14 +294,14 @@ public class EveryDayRecFragment extends BaseLoadFragment {
             banner.setOnBannerClickListener(new OnBannerClickListener() {
                 @Override
                 public void OnBannerClick(int position) {
-                    String detailUrl = bannerUrls.get(position).getCode();
+                    String detailUrl = bannerUrls.get(position - 1).getCode();
                     if (TextUtils.isEmpty(detailUrl)) {
                         showToast("暂无详情~");
                         return;
                     }
-                    Intent intent = new Intent(getActivity(), WebViewActivity.class);
+                    intent = new Intent();
                     intent.putExtra("url", detailUrl);
-                    startActivity(intent);
+                    startNewActivity(WebViewActivity.class);
                 }
             });
         }

@@ -25,6 +25,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayoutResId());
         ButterKnife.bind(this);
         setTheme();
+        intent = new Intent();
     }
 
     protected void setTheme() {
@@ -42,7 +43,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         Log.i(TAG, String.valueOf(content));
     }
 
-    protected void starNewActivity(Class<?> clazz) {
+    protected void startNewActivity(Class<?> clazz) {
         intent.setClass(this, clazz);
         startActivity(intent);
     }
@@ -50,12 +51,21 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void startActivity(Intent intent) {
         super.startActivity(intent);
+        setStartTransaction();
+    }
+
+    protected void setStartTransaction() {
         overridePendingTransition(R.anim.activity_right_in, R.anim.activity_left_out);
     }
+
 
     @Override
     public void finish() {
         super.finish();
+        setFinishTransaction();
+    }
+
+    protected void setFinishTransaction() {
         overridePendingTransition(R.anim.activity_left_in, R.anim.activity_right_out);
     }
 
