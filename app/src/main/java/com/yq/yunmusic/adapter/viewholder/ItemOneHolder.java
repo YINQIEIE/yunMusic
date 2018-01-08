@@ -14,14 +14,13 @@ import com.yq.yunmusic.http.response.GankBean;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 /**
  * 轮播图
  */
 public class ItemOneHolder extends BaseViewHolder {
 
-    @BindView(R.id.ll_one_photo_line)
-    View llOnePhotoLine;
     @BindView(R.id.iv_one)
     ImageView ivOne;
     @BindView(R.id.tv_title_one)
@@ -33,6 +32,7 @@ public class ItemOneHolder extends BaseViewHolder {
 
     @Override
     public void onBindViewHolder(List<GankBean.ResultBean> list, int position) {
+        this.list = list;
         if ("福利".equals(list.get(0).getType())) {
             tvTitleOne.setVisibility(View.GONE);
             ivOne.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -48,6 +48,17 @@ public class ItemOneHolder extends BaseViewHolder {
             setDes(list, 0, tvTitleOne);
             displayRandomImg(1, 0, ivOne, list);
         }
+    }
+
+    @OnClick({R.id.ll_one})
+    void onClick(View view) {
+        int index = -1;
+        switch (view.getId()) {
+            case R.id.ll_one:
+                index = 0;
+                break;
+        }
+        goToDetails(list.get(index).getUrl());
     }
 
 }

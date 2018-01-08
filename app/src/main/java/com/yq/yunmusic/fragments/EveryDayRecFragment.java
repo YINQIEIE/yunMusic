@@ -176,9 +176,9 @@ public class EveryDayRecFragment extends BaseLoadFragment {
             lists.add(list1);
             lists.add(list2);
         }
-        for (int i = 0; i < urlList.size(); i++) {
-            log(urlList.get(i));
-        }
+//        for (int i = 0; i < urlList.size(); i++) {
+//            log(urlList.get(i));
+//        }
     }
 
     private List<String> urlList = new ArrayList<>();
@@ -206,6 +206,28 @@ public class EveryDayRecFragment extends BaseLoadFragment {
         return tempList;
     }
 
+    private GankBean.ResultBean getAndroidBean(List<GankBean.ResultBean> arrayList, int i, int androidSize) {
+
+        GankBean.ResultBean resultBean = new GankBean.ResultBean();
+        // 标题
+        resultBean.setDesc(arrayList.get(i).getDesc());
+        // 类型
+        resultBean.setType(arrayList.get(i).getType());
+        // 跳转链接
+        resultBean.setUrl(arrayList.get(i).getUrl());
+        // 随机图的url
+        if (i < 3) {
+            resultBean.setImageUrl(getImageUrl(ConstantsImageUrl.HOME_SIX_URLS, 3));//三小图
+        } else if (androidSize == 4) {
+            resultBean.setImageUrl(getImageUrl(ConstantsImageUrl.HOME_ONE_URLS, 1));//一图
+        } else if (androidSize == 5) {
+            resultBean.setImageUrl(getImageUrl(ConstantsImageUrl.HOME_TWO_URLS, 2));//两图
+        } else if (androidSize >= 6) {
+            resultBean.setImageUrl(getImageUrl(ConstantsImageUrl.HOME_SIX_URLS, 3));//三小图
+        }
+        return resultBean;
+    }
+
     /**
      * 获取随机位置的图片，去重复
      *
@@ -223,28 +245,6 @@ public class EveryDayRecFragment extends BaseLoadFragment {
             }
         }
         return url;
-    }
-
-    private GankBean.ResultBean getAndroidBean(List<GankBean.ResultBean> arrayList, int i, int androidSize) {
-
-        GankBean.ResultBean resultBean = new GankBean.ResultBean();
-        // 标题
-        resultBean.setDesc(arrayList.get(i).getDesc());
-        // 类型
-        resultBean.setType(arrayList.get(i).getType());
-        // 跳转链接
-        resultBean.setUrl(arrayList.get(i).getUrl());
-        // 随机图的url
-        if (i < 3) {
-            resultBean.setImageUrl(ConstantsImageUrl.HOME_SIX_URLS[getRandom(3)]);//三小图
-        } else if (androidSize == 4) {
-            resultBean.setImageUrl(ConstantsImageUrl.HOME_ONE_URLS[getRandom(1)]);//一图
-        } else if (androidSize == 5) {
-            resultBean.setImageUrl(ConstantsImageUrl.HOME_TWO_URLS[getRandom(2)]);//两图
-        } else if (androidSize >= 6) {
-            resultBean.setImageUrl(ConstantsImageUrl.HOME_SIX_URLS[getRandom(3)]);//三小图
-        }
-        return resultBean;
     }
 
     private int getRandom(int type) {
@@ -287,7 +287,7 @@ public class EveryDayRecFragment extends BaseLoadFragment {
             banner.setImageLoader(new ImageLoader() {
                 @Override
                 public void displayImage(Context context, Object path, ImageView imageView) {
-                    log(((BannerBean.PicBean) path).getRandpic());
+                    log("banner >>> " + ((BannerBean.PicBean) path).getRandpic());
                     ImgLoadUtil.displayImage(context, ((BannerBean.PicBean) path).getRandpic(), imageView);
                 }
             });
