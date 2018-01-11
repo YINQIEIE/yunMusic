@@ -2,6 +2,7 @@ package com.yq.yunmusic.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.youth.banner.Banner;
@@ -54,19 +56,16 @@ public class EveryDayRecFragment extends BaseLoadFragment {
 
     //    @BindView(R.id.banner)
     Banner banner;
-//    @BindView(R.id.tv_xiandu)
-//    TextView tvXiandu;
-//    @BindView(R.id.tv_date)
-//    TextView tvDate;
-//    @BindView(R.id.fl_everyday)
-//    FrameLayout flEveryday;
-//    @BindView(R.id.tv_movie)
-//    TextView tvMovie;
+    @BindView(R.id.iv_loading)
+    ImageView ivLoading;
+    @BindView(R.id.loadingView)
+    LinearLayout loadingView;
 
     private EveryDayRecAdapter gankAdapter;
     private List<String> orderList = Arrays.asList("Android", "福利", "iOS", "休息视频", "瞎推荐", "前端");
     private View headerView;
     private List<BannerBean.PicBean> bannerUrls;
+    private AnimationDrawable drawable;
 
     @Override
     protected int getLayoutId() {
@@ -80,8 +79,11 @@ public class EveryDayRecFragment extends BaseLoadFragment {
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         gankAdapter = new EveryDayRecAdapter(getActivity(), data);
         gankAdapter.addHeaderView(headerView);
+//        gankAdapter.addHeaderView(headerView);
         rv.setAdapter(gankAdapter);
-
+        drawable = (AnimationDrawable) ivLoading.getDrawable();
+        if (!drawable.isRunning())
+            drawable.start();
     }
 
     private void initHeaderView() {
@@ -94,6 +96,10 @@ public class EveryDayRecFragment extends BaseLoadFragment {
     @Override
     protected void getData() {
         getContent();
+        getBannerInfo();
+    }
+
+    private void getBannerInfo() {
         Call<BannerBean> bannerCall = RetrofitManager.getBannerHttpService().getBannerUrls();
         bannerCall.enqueue(new Callback<BannerBean>() {
             @Override
@@ -123,13 +129,12 @@ public class EveryDayRecFragment extends BaseLoadFragment {
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DATE);
         day = 2;
-        Call<GankBean> gankCall = RetrofitManager.getGankHttpService().getGankIoDay(year, month, day);
-        gankCall.enqueue(new Callback<GankBean>() {
+        Call<GankBean<Map<String, List<GankBean.ResultBean>>>> gankCall = RetrofitManager.getGankHttpService().getGankIoDay(year, month, day);
+        gankCall.enqueue(new Callback<GankBean<Map<String, List<GankBean.ResultBean>>>>() {
             @Override
-            public void onResponse(Call<GankBean> call, Response<GankBean> response) {
+            public void onResponse(Call<GankBean<Map<String, List<GankBean.ResultBean>>>> call, Response<GankBean<Map<String, List<GankBean.ResultBean>>>> response) {
                 GankBean gankBean = response.body();
-                List<String> category = gankBean.getCategory();
-                Map<String, List<GankBean.ResultBean>> map = gankBean.getResults();
+                Map<String, List<GankBean.ResultBean>> map = (Map<String, List<GankBean.ResultBean>>) gankBean.getResults();
                 String groupName;
                 data.clear();
                 for (int i = 0; i < orderList.size(); i++) {
@@ -138,11 +143,15 @@ public class EveryDayRecFragment extends BaseLoadFragment {
                     addUrlList(data, list, groupName);
                 }
                 gankAdapter.notifyDataSetChanged();
+                if (drawable.isRunning())
+                    drawable.stop();
+                rv.setVisibility(View.VISIBLE);
+                loadingView.setVisibility(View.GONE);
             }
 
             @Override
-            public void onFailure(Call<GankBean> call, Throwable t) {
-                log("failure");
+            public void onFailure(Call<GankBean<Map<String, List<GankBean.ResultBean>>>> call, Throwable t) {
+                log("failure" + t.getMessage() + t.getCause());
             }
         });
     }

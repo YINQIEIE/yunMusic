@@ -141,4 +141,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         viewpager.setCurrentItem(index);
     }
 
+    @Override
+    protected void setFinishTransaction() {
+
+    }
 }

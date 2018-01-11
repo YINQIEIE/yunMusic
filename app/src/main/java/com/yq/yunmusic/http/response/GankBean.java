@@ -1,13 +1,12 @@
 package com.yq.yunmusic.http.response;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Administrator on 2018/1/2.
  */
 
-public class GankBean {
+public class GankBean<T> {
 
     /**
      * category : ["iOS","Android","瞎推荐","拓展资源","福利","休息视频"]
@@ -17,7 +16,7 @@ public class GankBean {
 
     private boolean error;
     private List<String> category;
-    private Map<String, List<ResultBean>> results;
+    private T results;
 
     public boolean isError() {
         return error;
@@ -32,11 +31,11 @@ public class GankBean {
         this.category = category;
     }
 
-    public Map<String, List<ResultBean>> getResults() {
+    public T getResults() {
         return results;
     }
 
-    public void setResults(Map<String, List<ResultBean>> results) {
+    public void setResults(T results) {
         this.results = results;
     }
 

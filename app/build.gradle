@@ -40,5 +40,6 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     compile 'com.youth.banner:banner:1.4.4'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
+    compile 'com.android.support:support-v4:26.+'
     testCompile 'junit:junit:4.12'
 }
