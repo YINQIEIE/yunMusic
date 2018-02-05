@@ -64,9 +64,10 @@ public class XRecyclerView extends RecyclerView {
                 int comVisiblePos = ((GridLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition();
                 Log.i("last visible", lastVisibleItemPosition + " >>> " + comVisiblePos);
             }
-            if (layoutManager.getChildCount() > 0
-                    && lastVisibleItemPosition >= layoutManager.getItemCount() - 1
-                    && layoutManager.getItemCount() > layoutManager.getChildCount()) {
+            if (layoutManager.getChildCount() > 0//判断有数据
+                    && lastVisibleItemPosition >= layoutManager.getItemCount() - 1//最后一个完整可见的item的位置等于layoutmanager的最后一个item的位置
+                    && layoutManager.getItemCount() > layoutManager.getChildCount())//item总数大于可见的数量
+            {
                 View footerView = footerViews.get(0);
                 footerView.setVisibility(VISIBLE);
                 postDelayed(new Runnable() {
