@@ -2,15 +2,14 @@ package com.yq.yunmusic.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.yq.yunmusic.R;
 import com.yq.yunmusic.http.response.GankBean;
-import com.yq.yunmusic.utils.ImgLoadUtil;
 
 import java.util.List;
 
@@ -39,8 +38,9 @@ public class WelfareAdapter extends RecyclerView.Adapter<WelfareAdapter.ItemHold
 
     @Override
     public void onBindViewHolder(WelfareAdapter.ItemHolder holder, int position) {
-        Log.i("welfareAdapter", data.get(position).getUrl());
-        ImgLoadUtil.displayImage(mContext, data.get(position).getUrl(), holder.imageView);
+        //占位图会导致图片失真
+        Glide.with(mContext).load(data.get(position).getUrl()).crossFade(1000).into(holder.imageView);
+//        ImgLoadUtil.displayImage(mContext, data.get(position).getUrl(), holder.imageView);
     }
 
     @Override
