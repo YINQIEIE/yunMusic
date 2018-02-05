@@ -66,6 +66,7 @@ public class EveryDayRecFragment extends BaseLoadFragment {
     private View headerView;
     private List<BannerBean.PicBean> bannerUrls;
     private AnimationDrawable drawable;
+    private Calendar calendar;
 
     @Override
     protected int getLayoutId() {
@@ -95,6 +96,7 @@ public class EveryDayRecFragment extends BaseLoadFragment {
 
     @Override
     protected void getData() {
+        calendar = Calendar.getInstance();
         getContent();
         getBannerInfo();
     }
@@ -124,23 +126,27 @@ public class EveryDayRecFragment extends BaseLoadFragment {
      * 获取各种资讯
      */
     private void getContent() {
-        Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DATE);
-        day = 2;
         Call<GankBean<Map<String, List<GankBean.ResultBean>>>> gankCall = RetrofitManager.getGankHttpService().getGankIoDay(year, month, day);
         gankCall.enqueue(new Callback<GankBean<Map<String, List<GankBean.ResultBean>>>>() {
             @Override
             public void onResponse(Call<GankBean<Map<String, List<GankBean.ResultBean>>>> call, Response<GankBean<Map<String, List<GankBean.ResultBean>>>> response) {
                 GankBean gankBean = response.body();
+                if (gankBean.getCategory() == null || gankBean.getCategory().size() == 0) {
+                    calendar.add(Calendar.DATE, -1);
+                    getContent();
+                    return;
+                }
                 Map<String, List<GankBean.ResultBean>> map = (Map<String, List<GankBean.ResultBean>>) gankBean.getResults();
                 String groupName;
                 data.clear();
                 for (int i = 0; i < orderList.size(); i++) {
                     groupName = orderList.get(i);
                     List<GankBean.ResultBean> list = map.get(groupName);
-                    addUrlList(data, list, groupName);
+                    if (null != list)
+                        addUrlList(data, list, groupName);
                 }
                 gankAdapter.notifyDataSetChanged();
                 if (drawable.isRunning())
