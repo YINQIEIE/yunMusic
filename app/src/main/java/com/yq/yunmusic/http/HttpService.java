@@ -38,6 +38,6 @@ public interface HttpService {
      * eg: http://gank.io/api/data/Android/10/1
      */
     @GET("data/{type}/{per_page}/{page}")
-    Call<GankBean<List<GankBean.ResultBean>>> getGankPhotos(@Path("type") String type, @Path("page") int page, @Path("per_page") int per_page);
+    Call<GankBean<List<GankBean.ResultBean>>> getGankInfo(@Path("type") String type, @Path("page") int page, @Path("per_page") int per_page);
 
 }

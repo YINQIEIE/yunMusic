@@ -24,7 +24,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class WelfareFragment extends BaseLoadFragment {
+public class GankChildFragment extends BaseLoadFragment {
 
     @BindView(R.id.rv_pics)
     XRecyclerView rvPics;
@@ -85,20 +85,25 @@ public class WelfareFragment extends BaseLoadFragment {
 
     @Override
     protected void getData() {
-        final Call<GankBean<List<GankBean.ResultBean>>> photoCall = RetrofitManager.getGankHttpService().getGankInfo("福利", page, 10);
+        final Call<GankBean<List<GankBean.ResultBean>>> photoCall = RetrofitManager.getGankHttpService().getGankInfo("Android", page, 10);
         photoCall.enqueue(new Callback<GankBean<List<GankBean.ResultBean>>>() {
             @Override
             public void onResponse(Call<GankBean<List<GankBean.ResultBean>>> call, Response<GankBean<List<GankBean.ResultBean>>> response) {
-                GankBean photoGank = response.body();
-                list.addAll((List<GankBean.ResultBean>) photoGank.getResults());
+                log(response.body().toString());
+                List<GankBean.ResultBean> list = response.body().getResults();
                 for (int i = 0; i < list.size(); i++) {
-                    log("photo url >>> " + list.get(i).getUrl());
+                    log(list.get(i).toString());
                 }
-                if (page == 1)
-                    adapter.notifyDataSetChanged();
-                else {
-                    rvPics.loadComplete();
-                }
+//                GankBean photoGank = response.body();
+//                list.addAll((List<GankBean.ResultBean>) photoGank.getResults());
+//                for (int i = 0; i < list.size(); i++) {
+//                    log("photo url >>> " + list.get(i).getUrl());
+//                }
+//                if (page == 1)
+//                    adapter.notifyDataSetChanged();
+//                else {
+//                    rvPics.loadComplete();
+//                }
             }
 
             @Override
