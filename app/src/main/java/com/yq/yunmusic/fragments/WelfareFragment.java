@@ -24,6 +24,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * 福利界面
+ */
 public class WelfareFragment extends BaseLoadFragment {
 
     @BindView(R.id.rv_pics)
@@ -65,7 +68,7 @@ public class WelfareFragment extends BaseLoadFragment {
             }
         });
         View loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_loading, null);
-//        rvPics.addFooterView(loadingView);
+//        rvGanks.addFooterView(loadingView);
         rvPics.addFooterView(new FooterView(getActivity()));
         rvPics.setAdapter(adapter);
         rvPics.setLoadListener(new XRecyclerView.LoadListener() {

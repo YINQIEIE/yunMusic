@@ -45,6 +45,7 @@ import retrofit2.Response;
 
 /**
  * Created by Administrator on 2018/1/3.
+ * 每日推荐
  */
 
 public class EveryDayRecFragment extends BaseLoadFragment {
