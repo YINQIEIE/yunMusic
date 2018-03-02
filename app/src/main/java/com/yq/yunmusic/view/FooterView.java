@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -24,10 +26,12 @@ public class FooterView extends LinearLayout {
 
     public FooterView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-//        View view = LayoutInflater.from(context).inflate(R.layout.layout_loading, this, false);
-//        this.addView(view);
-        View.inflate(context, R.layout.layout_loading, this);
+        setLayoutParams(new LayoutParams(-1, ViewGroup.LayoutParams.WRAP_CONTENT));
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_loading, this, false);
+        this.addView(view, new LinearLayout.LayoutParams(-1, -1));
         ivLoading = findViewById(R.id.iv_loading);
+        setVisibility(GONE);
+//        View.inflate(context, R.layout.layout_loading, this);
     }
 
     @Override

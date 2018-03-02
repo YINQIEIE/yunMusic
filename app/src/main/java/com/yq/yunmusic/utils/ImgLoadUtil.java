@@ -131,6 +131,7 @@ public class ImgLoadUtil {
                 .crossFade(1000)
                 .into(imageView);
     }
+
 //    /**
 //     * 妹子，电影列表图
 //     *

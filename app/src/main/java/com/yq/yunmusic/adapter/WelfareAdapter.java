@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 
 /**
  * Created by Administrator on 2018/1/10.
+ * 干活定制
  */
 
 public class WelfareAdapter extends RecyclerView.Adapter<WelfareAdapter.ItemHolder> {

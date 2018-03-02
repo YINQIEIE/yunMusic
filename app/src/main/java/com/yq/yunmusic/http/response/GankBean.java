@@ -60,6 +60,7 @@ public class GankBean<T> {
         private String url;
         private boolean used;
         private String who;
+        private List<String> images;
 
         public String getImageUrl() {
             return imageUrl;
@@ -164,6 +165,10 @@ public class GankBean<T> {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public List<String> getImages() {
+            return images;
         }
     }
 

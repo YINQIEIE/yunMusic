@@ -61,7 +61,7 @@ public class XRecyclerView extends RecyclerView {
                 lastVisibleItemPosition = findMax(into);
             } else {
                 lastVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
-                int comVisiblePos = ((GridLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition();
+                int comVisiblePos = ((LinearLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition();
                 Log.i("last visible", lastVisibleItemPosition + " >>> " + comVisiblePos);
             }
             if (layoutManager.getChildCount() > 0//判断有数据
