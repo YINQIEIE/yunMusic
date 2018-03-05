@@ -34,11 +34,10 @@
                 android:id="@+id/tv_android_des"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:lineSpacingExtra="4dp"
                 android:textColor="@color/colorContent"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
 
             <ImageView
                 android:id="@+id/iv_android_pic"
