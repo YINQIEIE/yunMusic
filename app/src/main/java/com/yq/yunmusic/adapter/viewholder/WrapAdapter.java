@@ -17,7 +17,7 @@ public class WrapAdapter extends RecyclerView.Adapter {
     private RecyclerView.Adapter adapter;
     protected SparseArray<View> headerViews;
     protected SparseArray<View> footerViews;
-    private int headerPosition = -1;
+    private int headerPosition = 0;
     private int footerPosition = -1;
 
     public WrapAdapter(@NonNull RecyclerView.Adapter adapter, SparseArray<View> headerViews, SparseArray<View> footerViews) {
@@ -82,8 +82,9 @@ public class WrapAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case ItemType.ITEM_HEADER:
+            case ItemType.ITEM_HEADER: {
                 return new SimpleViewHolder(headerViews.get(headerPosition++));
+            }
             case ItemType.ITEM_NORMAL:
                 return adapter.onCreateViewHolder(parent, viewType);
             case ItemType.ITEM_FOOTER:
@@ -109,9 +110,10 @@ public class WrapAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (isHeaderPosition(position)) return;
+        if (getItemViewType(position) == ItemType.ITEM_HEADER || getItemViewType(position) == ItemType.ITEM_FOOTER)
+            return;
         if (position - headerViews.size() < adapter.getItemCount())
-            adapter.onBindViewHolder(holder, position);
+            adapter.onBindViewHolder(holder, position - headerViews.size());
     }
 
     @Override
