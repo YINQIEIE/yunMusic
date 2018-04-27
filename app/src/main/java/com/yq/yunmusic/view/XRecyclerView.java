@@ -23,14 +23,13 @@ public class XRecyclerView extends RecyclerView {
     private SparseArray<View> headerViews;
     private SparseArray<View> footerViews;
     private WrapAdapter wrapAdapter;
-    private int maxHeight = 120;
 
     public void setPullToRefresh(boolean pullToRefresh) {
         isPullToRefresh = pullToRefresh;
     }
 
     private boolean isPullToRefresh = false;
-    private RefreshHeaderView pullToRefreshHeader;
+    private BaseRefreshHeaderView pullToRefreshHeader;
 
     public XRecyclerView(Context context) {
         super(context);
@@ -44,7 +43,7 @@ public class XRecyclerView extends RecyclerView {
     private void init() {
         headerViews = new SparseArray<>();
         footerViews = new SparseArray<>();
-        pullToRefreshHeader = new RefreshHeaderView(getContext());
+        pullToRefreshHeader = new RefreshHeaderView1(getContext());
     }
 
     float mLastY = -1;
