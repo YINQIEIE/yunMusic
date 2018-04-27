@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yq.yunmusic.R;
+import com.yq.yunmusic.activity.WebViewActivity;
 import com.yq.yunmusic.http.response.GankBean;
 import com.yq.yunmusic.utils.ImgLoadUtil;
 
@@ -49,7 +50,7 @@ public class AndroidAdapter extends RecyclerView.Adapter<AndroidAdapter.ItemHold
     }
 
     private void onBind(ItemHolder holder, int position) {
-        GankBean.ResultBean gank = data.get(position);
+        final GankBean.ResultBean gank = data.get(position);
         if ("福利".equals(gank.getType())) {//福利只显示图片
             holder.ivWelfare.setVisibility(View.VISIBLE);
             holder.llAndroid.setVisibility(View.GONE);
@@ -67,6 +68,12 @@ public class AndroidAdapter extends RecyclerView.Adapter<AndroidAdapter.ItemHold
         }
         holder.tvWho.setText(TextUtils.isEmpty(gank.getWho()) ? "佚名" : gank.getWho());
         holder.tvTime.setText(gank.getCreatedAt().substring(0, 10));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WebViewActivity.loadUrl(mContext, gank.getUrl(), gank.getName());
+            }
+        });
     }
 
     @Override
@@ -94,6 +101,7 @@ public class AndroidAdapter extends RecyclerView.Adapter<AndroidAdapter.ItemHold
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+
     }
 
 

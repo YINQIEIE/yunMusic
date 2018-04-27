@@ -2,21 +2,15 @@ package com.yq.yunmusic.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 
-import com.google.common.base.Strings;
 import com.yq.yunmusic.R;
 import com.yq.yunmusic.adapter.viewholder.AndroidAdapter;
 import com.yq.yunmusic.base.BaseLoadFragment;
 import com.yq.yunmusic.http.RetrofitManager;
 import com.yq.yunmusic.http.response.GankBean;
-import com.yq.yunmusic.utils.BottomSheetManager;
-import com.yq.yunmusic.utils.SPUtil;
 import com.yq.yunmusic.view.FooterView;
 import com.yq.yunmusic.view.XRecyclerView;
 
@@ -31,15 +25,13 @@ import retrofit2.Response;
 /**
  * 干货订制
  */
-public class GankChildFragment extends BaseLoadFragment {
+public class AndroidFragment extends BaseLoadFragment {
 
     @BindView(R.id.rv_ganks)
     XRecyclerView rvGanks;
     private List<GankBean.ResultBean> list;
     private AndroidAdapter adapter;
     private int page = 1;
-    private View mHeaderView;
-    private String gankKind;
 
     @Override
     protected int getLayoutId() {
@@ -51,7 +43,9 @@ public class GankChildFragment extends BaseLoadFragment {
         list = new ArrayList<>();
         adapter = new AndroidAdapter(getActivity(), list);
         rvGanks.setLayoutManager(new LinearLayoutManager(getActivity()));
-        addHeaderView();
+        View mHeaderView = LayoutInflater.from(getActivity()).inflate(R.layout.header_item_gank_child, null);
+        rvGanks.setPullToRefresh(true);
+        rvGanks.addHeaderView(mHeaderView);
         rvGanks.addFooterView(new FooterView(getActivity()));
         rvGanks.setAdapter(adapter);
         rvGanks.setLoadListener(new XRecyclerView.LoadListener() {
@@ -69,46 +63,9 @@ public class GankChildFragment extends BaseLoadFragment {
 
     }
 
-    private void addHeaderView() {
-        mHeaderView = LayoutInflater.from(getActivity()).inflate(R.layout.header_item_gank_child, null);
-        rvGanks.addHeaderView(mHeaderView);
-        initHeader(mHeaderView);
-    }
-
-    private void initHeader(View mHeaderView) {
-        final TextView tv_kind = mHeaderView.findViewById(R.id.tv_kind);
-        gankKind = SPUtil.getStringValByKey(getActivity(), "gank_kind");
-        tv_kind.setText(TextUtils.isEmpty(gankKind) ? "Android" : gankKind);
-        final View view = mHeaderView.findViewById(R.id.ll_choose_catalogue);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getActivity());
-                View sheet = BottomSheetManager.manager.getGankKindSheetView(getActivity());
-                BottomSheetManager.manager.setGankKindItemClickListener(new BottomSheetManager.OnGankKindItemClickListener() {
-                    @Override
-                    public void onItemClick(BottomSheetManager.ItemBean bean) {
-                        if (gankKind.equals(bean.getName())) return;
-                        gankKind = bean.getRequestName();
-                        tv_kind.setText(bean.getName());
-                        SPUtil.saveString(getActivity(), "gank_kind", gankKind);//保存选择的种类
-                        page = 1;
-                        getData();
-                        bottomSheetDialog.dismiss();
-                    }
-                });
-                bottomSheetDialog.setContentView(sheet);
-                bottomSheetDialog.show();
-            }
-        });
-    }
-
-
     @Override
     protected void getData() {
-        gankKind = SPUtil.getStringValByKey(getActivity(), "gank_kind");
-        gankKind = Strings.isNullOrEmpty(gankKind) ? "Android" : gankKind;
-        final Call<GankBean<List<GankBean.ResultBean>>> photoCall = RetrofitManager.getGankHttpService().getGankInfo(gankKind, page, 10);
+        final Call<GankBean<List<GankBean.ResultBean>>> photoCall = RetrofitManager.getGankHttpService().getGankInfo("Android", page, 10);
         photoCall.enqueue(new Callback<GankBean<List<GankBean.ResultBean>>>() {
             @Override
             public void onResponse(Call<GankBean<List<GankBean.ResultBean>>> call, Response<GankBean<List<GankBean.ResultBean>>> response) {

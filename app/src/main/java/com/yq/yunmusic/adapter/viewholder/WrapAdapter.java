@@ -82,9 +82,8 @@ public class WrapAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case ItemType.ITEM_HEADER: {
+            case ItemType.ITEM_HEADER:
                 return new SimpleViewHolder(headerViews.get(headerPosition++));
-            }
             case ItemType.ITEM_NORMAL:
                 return adapter.onCreateViewHolder(parent, viewType);
             case ItemType.ITEM_FOOTER:

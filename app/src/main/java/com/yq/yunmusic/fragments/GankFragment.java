@@ -40,7 +40,7 @@ public class GankFragment extends BaseFragment {
         fragments.add(new EveryDayRecFragment());
         fragments.add(new WelfareFragment());
         fragments.add(new GankChildFragment());
-        fragments.add(new BlankFragment());
+        fragments.add(new AndroidFragment());
         fragmentAdapter = new MyFragmentAdapter(getChildFragmentManager(), fragments, titles);
         vpContent.setAdapter(fragmentAdapter);
         vpContent.setOffscreenPageLimit(fragments.size());

@@ -23,6 +23,14 @@ public class XRecyclerView extends RecyclerView {
     private SparseArray<View> headerViews;
     private SparseArray<View> footerViews;
     private WrapAdapter wrapAdapter;
+    private int maxHeight = 120;
+
+    public void setPullToRefresh(boolean pullToRefresh) {
+        isPullToRefresh = pullToRefresh;
+    }
+
+    private boolean isPullToRefresh = false;
+    private RefreshHeaderView pullToRefreshHeader;
 
     public XRecyclerView(Context context) {
         super(context);
@@ -36,12 +44,66 @@ public class XRecyclerView extends RecyclerView {
     private void init() {
         headerViews = new SparseArray<>();
         footerViews = new SparseArray<>();
+        pullToRefreshHeader = new RefreshHeaderView(getContext());
     }
+
+    float mLastY = -1;
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-
+        if (mLastY == -1) {
+            mLastY = e.getRawY();
+        }
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mLastY = e.getRawY();
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                float deltaY = e.getRawY() - mLastY;
+                mLastY = e.getRawY();
+                if (isOnTop() && isPullToRefresh && !pullToRefreshHeader.isRefreshing()) {
+                    Log.i("recyclerView deltaY", "deltaY2 = " + deltaY);
+                    pullToRefreshHeader.onMove((int) deltaY);
+                    //当刷新头部高度大于0并且不是正在刷新状态的时候，recyclerView 不拦截滑动事件，否则头部高度变化有问题
+                    //场景：下拉后手指不离开屏幕再上滑
+                    if (pullToRefreshHeader.getHeight() > 0 && !pullToRefreshHeader.isRefreshing())
+                        return false;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mLastY = -1;
+                if (pullToRefreshHeader.isReadyToRefresh())
+                    refresh();
+                pullToRefreshHeader.onActionUp();
+                break;
+        }
         return super.onTouchEvent(e);
+    }
+
+    private void refresh() {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                refreshComplete();
+            }
+        }, 2000);
+    }
+
+    public void refreshComplete() {
+        pullToRefreshHeader.refreshComplete();
+    }
+
+    private boolean isOnTop() {
+        if (headerViews == null || headerViews.size() == 0) {
+            return false;
+        }
+        View view = headerViews.get(0);
+        if (view.getParent() != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -97,11 +159,13 @@ public class XRecyclerView extends RecyclerView {
     }
 
     public void addHeaderView(View view) {
-        headerViews.append(headerViews.size(), view);
+        if (isPullToRefresh)//下拉刷新可用
+            headerViews.put(0, pullToRefreshHeader);
+        headerViews.put(headerViews.size(), view);
     }
 
     public void addFooterView(View view) {
-        footerViews.append(footerViews.size(), view);
+        footerViews.put(footerViews.size(), view);
     }
 
     @Override
