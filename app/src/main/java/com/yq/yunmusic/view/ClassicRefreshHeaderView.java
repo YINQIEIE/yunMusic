@@ -1,57 +1,47 @@
 package com.yq.yunmusic.view;
 
 import android.content.Context;
-import android.graphics.drawable.AnimationDrawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yq.yunmusic.R;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Administrator on 2018/1/11.
  * 刷新头部
  */
 
-public class RefreshHeaderView1 extends BaseRefreshHeaderView {
+public class ClassicRefreshHeaderView extends BaseRefreshHeaderView {
 
     private ImageView ivLoading;
     private TextView tv_msg;
-    private AnimationDrawable animationDrawable;
+    private TextView tv_time;
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public RefreshHeaderView1(Context context) {
+    public ClassicRefreshHeaderView(Context context) {
         this(context, null);
     }
 
-    public RefreshHeaderView1(Context context, @Nullable AttributeSet attrs) {
+    public ClassicRefreshHeaderView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
     protected int getLayoutId() {
-        return R.layout.layout_refresh;
+        return R.layout.layout_refresh_with_arrow;
     }
 
     @Override
     protected void init() {
         ivLoading = findViewById(R.id.iv_loading);
         tv_msg = findViewById(R.id.tv_msg);
-        animationDrawable = (AnimationDrawable) ivLoading.getDrawable();
-    }
-
-
-    @Override
-    public void setVisibility(int visibility) {
-        super.setVisibility(visibility);
-        if (visibility == View.VISIBLE) {
-            if (!animationDrawable.isRunning())
-                animationDrawable.start();
-        } else if (visibility == View.GONE) {
-            if (animationDrawable.isRunning())
-                animationDrawable.stop();
-        }
+        tv_time = findViewById(R.id.tv_time);
     }
 
     /**
@@ -60,9 +50,13 @@ public class RefreshHeaderView1 extends BaseRefreshHeaderView {
      * 对应状态 {@link #STATE_NORMAL}
      */
     public void reset() {
-        if (animationDrawable.isRunning())
-            animationDrawable.stop();
+        ivLoading.setRotation(0);
         tv_msg.setText("下拉刷新");
+        setLastRefreshTime();
+    }
+
+    private void setLastRefreshTime() {
+        tv_time.setText(String.format(Locale.getDefault(), "上次刷新时间：%s", sdf.format(new Date())));
     }
 
     /**
@@ -70,6 +64,7 @@ public class RefreshHeaderView1 extends BaseRefreshHeaderView {
      * 对应状态 {@link #STATE_RELEASE_TO_REFRESH}
      */
     public void onReleaseToRefresh() {
+        ivLoading.setRotation(180);
         tv_msg.setText("松开刷新");
     }
 
@@ -78,7 +73,6 @@ public class RefreshHeaderView1 extends BaseRefreshHeaderView {
      * 对应状态 {@link #STATE_REFRESH_START}
      */
     public void onRefreshStart() {
-        animationDrawable.start();
     }
 
     /**
@@ -97,7 +91,6 @@ public class RefreshHeaderView1 extends BaseRefreshHeaderView {
      */
     public void refreshComplete() {
         tv_msg.setText("刷新成功");
-        animationDrawable.stop();
         startReleaseAnim();
     }
 

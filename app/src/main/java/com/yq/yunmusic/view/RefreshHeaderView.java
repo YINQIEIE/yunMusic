@@ -80,8 +80,6 @@ public class RefreshHeaderView extends LinearLayout {
      *
      * @param deltaY 要改变的距离
      */
-    float heightRecord = 0;
-
     public void onMove(int deltaY) {
         Log.i("recyclerView deltaY", "deltaY1 = " + deltaY);
         headerLayoutParams.height += deltaY;
@@ -96,7 +94,7 @@ public class RefreshHeaderView extends LinearLayout {
             setState(STATE_NORMAL);
         }
         Log.i("recyclerView", "pull ..." + maxHeight + " headerHeight = " + headerLayoutParams.height);
-//        ll_header.setLayoutParams(headerLayoutParams);
+        ll_header.setLayoutParams(headerLayoutParams);
     }
 
     public void onActionUp() {

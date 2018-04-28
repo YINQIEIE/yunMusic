@@ -23,6 +23,7 @@ public abstract class BaseRefreshHeaderView extends LinearLayout implements Refr
     protected int actualHeight = 0;
     protected int maxHeight = 0;
     protected int currentState = 0;
+    public static final float ratio = 1.25f;
 
     public BaseRefreshHeaderView(Context context) {
         this(context, null);
@@ -60,9 +61,9 @@ public abstract class BaseRefreshHeaderView extends LinearLayout implements Refr
      * @param deltaY 要改变的距离
      */
     public void onMove(int deltaY) {
-        Log.i("recyclerView deltaY", "deltaY1 = " + deltaY);
+        Log.i("refresh deltaY", "deltaY1 = " + deltaY / ratio);
         ViewGroup.LayoutParams headerLayoutParams = getLayoutParams();
-        headerLayoutParams.height += deltaY;
+        headerLayoutParams.height += deltaY / ratio;
         if (headerLayoutParams.height >= actualHeight) {//高度达到实际高度时设置为松开刷新状态，并且达到最大高度时，高度不再增加
             if (headerLayoutParams.height >= maxHeight)
                 headerLayoutParams.height = maxHeight;
@@ -70,17 +71,15 @@ public abstract class BaseRefreshHeaderView extends LinearLayout implements Refr
         } else {
             if (headerLayoutParams.height < 0)
                 headerLayoutParams.height = 0;
-            Log.i("recyclerView", "height < actualHeight");
             setState(STATE_NORMAL);
         }
-        Log.i("recyclerView", "pull ..." + maxHeight + " headerHeight = " + headerLayoutParams.height);
-//        ll_header.setLayoutParams(headerLayoutParams);
+        Log.i("refresh", "pull ..." + maxHeight + " headerHeight = " + headerLayoutParams.height);
+        setLayoutParams(headerLayoutParams);
     }
 
     public void onActionUp() {
         if (isReadyToRefresh()) {
             setState(STATE_REFRESHING);
-            onRefreshStart();
         } else
             startReleaseAnim();
     }
@@ -89,7 +88,6 @@ public abstract class BaseRefreshHeaderView extends LinearLayout implements Refr
      * 刷新头部复位动画，即减小刷新头部高度的动画
      */
     protected void startReleaseAnim() {
-//        Log.i("touch", "headerLayoutParams.height = " + headerLayoutParams.height + " height =" + getHeight());
         ValueAnimator valueAnimator = getHeightAnim();
         if (isRefreshing()) {//当前处于刷新状态，即执行了刷新方法，复位动画延迟 500ms 执行
             valueAnimator.setStartDelay(500);
@@ -122,9 +120,6 @@ public abstract class BaseRefreshHeaderView extends LinearLayout implements Refr
                 break;
             case STATE_RELEASE_TO_REFRESH:
                 onReleaseToRefresh();
-                break;
-            case STATE_REFRESH_START:
-                onRefreshStart();
                 break;
             case STATE_REFRESHING:
                 onRefreshing();

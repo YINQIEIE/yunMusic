@@ -23,6 +23,7 @@ public class XRecyclerView extends RecyclerView {
     private SparseArray<View> headerViews;
     private SparseArray<View> footerViews;
     private WrapAdapter wrapAdapter;
+    float mLastY = -1;
 
     public void setPullToRefresh(boolean pullToRefresh) {
         isPullToRefresh = pullToRefresh;
@@ -43,10 +44,8 @@ public class XRecyclerView extends RecyclerView {
     private void init() {
         headerViews = new SparseArray<>();
         footerViews = new SparseArray<>();
-        pullToRefreshHeader = new RefreshHeaderView1(getContext());
+        pullToRefreshHeader = new ClassicRefreshHeaderView(getContext());
     }
-
-    float mLastY = -1;
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
