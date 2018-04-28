@@ -105,6 +105,7 @@ public class GankChildFragment extends BaseLoadFragment {
 
     @Override
     protected void getData() {
+        showLoadingDialog();
         gankKind = SPUtil.getStringValByKey(getActivity(), "gank_kind");
         gankKind = Strings.isNullOrEmpty(gankKind) ? "Android" : gankKind;
         final Call<GankBean<List<GankBean.ResultBean>>> photoCall = RetrofitManager.getGankHttpService().getGankInfo(gankKind, page, 10);
@@ -112,6 +113,7 @@ public class GankChildFragment extends BaseLoadFragment {
             @Override
             public void onResponse(Call<GankBean<List<GankBean.ResultBean>>> call, Response<GankBean<List<GankBean.ResultBean>>> response) {
                 rvGanks.refreshComplete();//设置加载更多布局不可见
+                dismissLoadingDialog();
                 log(response.body().toString());
                 List<GankBean.ResultBean> data = response.body().getResults();
                 if (page == 1) list.clear();
@@ -122,6 +124,7 @@ public class GankChildFragment extends BaseLoadFragment {
             @Override
             public void onFailure(Call<GankBean<List<GankBean.ResultBean>>> call, Throwable t) {
                 rvGanks.refreshComplete();//设置加载更多布局不可见
+                dismissLoadingDialog();
                 if (page > 1) page--;
             }
         });

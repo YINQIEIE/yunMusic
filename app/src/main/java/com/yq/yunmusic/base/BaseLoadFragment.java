@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.yq.yunmusic.LoadingDialog;
+
 import butterknife.ButterKnife;
 
 /**
@@ -16,6 +18,7 @@ import butterknife.ButterKnife;
 public abstract class BaseLoadFragment extends BaseFragment {
 
     protected boolean isViewCreated, isDataLoaded;
+    protected LoadingDialog loadingDialog;
 
     @Nullable
     @Override
@@ -23,6 +26,7 @@ public abstract class BaseLoadFragment extends BaseFragment {
         View rootView = inflater.inflate(getLayoutId(), container, false);
         unbinder = ButterKnife.bind(this, rootView);
         isViewCreated = true;
+        loadingDialog = new LoadingDialog(getActivity());
         loadData();
         return rootView;
     }
@@ -43,6 +47,16 @@ public abstract class BaseLoadFragment extends BaseFragment {
             getData();
             isDataLoaded = true;
         }
+    }
+
+    protected void showLoadingDialog() {
+        if (null != loadingDialog && !loadingDialog.isShowing())
+            loadingDialog.show();
+    }
+
+    protected void dismissLoadingDialog() {
+        if (null != loadingDialog && loadingDialog.isShowing())
+            loadingDialog.dismiss();
     }
 
     protected abstract void getData();

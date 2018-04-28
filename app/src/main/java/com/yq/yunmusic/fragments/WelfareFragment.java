@@ -41,12 +41,6 @@ public class WelfareFragment extends BaseLoadFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         list = new ArrayList<>();
-//        adapter = new CommonAdapter<GankBean.ResultBean>(getActivity(), R.layout.item_photo, list) {
-//            @Override
-//            protected void convert(ViewHolder holder, GankBean.ResultBean resultBean, int position) {
-//                ImgLoadUtil.displayImage(getContext(), resultBean.getUrl(), (ImageView) holder.getView(R.id.iv_photo));
-//            }
-//        };
         adapter = new WelfareAdapter(getActivity(), list);
         rvPics.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         rvPics.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -84,25 +78,27 @@ public class WelfareFragment extends BaseLoadFragment {
 
     @Override
     protected void getData() {
+        showLoadingDialog();
         final Call<GankBean<List<GankBean.ResultBean>>> photoCall = RetrofitManager.getGankHttpService().getGankInfo("福利", page, 10);
         photoCall.enqueue(new Callback<GankBean<List<GankBean.ResultBean>>>() {
             @Override
             public void onResponse(Call<GankBean<List<GankBean.ResultBean>>> call, Response<GankBean<List<GankBean.ResultBean>>> response) {
+                dismissLoadingDialog();
+                rvPics.refreshComplete();
                 GankBean photoGank = response.body();
                 list.addAll((List<GankBean.ResultBean>) photoGank.getResults());
                 for (int i = 0; i < list.size(); i++) {
                     log("photo url >>> " + list.get(i).getUrl());
                 }
-                if (page == 1)
-                    adapter.notifyDataSetChanged();
-                else {
-                    rvPics.refreshComplete();
-                }
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onFailure(Call<GankBean<List<GankBean.ResultBean>>> call, Throwable t) {
-
+                dismissLoadingDialog();
+                rvPics.refreshComplete();
+                if (page > 1)
+                    page--;
             }
         });
     }

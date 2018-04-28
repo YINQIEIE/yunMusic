@@ -81,7 +81,6 @@ public class EveryDayRecFragment extends BaseLoadFragment {
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         gankAdapter = new EveryDayRecAdapter(getActivity(), data);
         gankAdapter.addHeaderView(headerView);
-//        gankAdapter.addHeaderView(headerView);
         rv.setAdapter(gankAdapter);
         drawable = (AnimationDrawable) ivLoading.getDrawable();
         if (!drawable.isRunning())
