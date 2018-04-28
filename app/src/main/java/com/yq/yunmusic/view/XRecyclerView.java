@@ -20,17 +20,15 @@ import com.yq.yunmusic.adapter.viewholder.WrapAdapter;
 
 public class XRecyclerView extends RecyclerView {
 
+    private WrapAdapter wrapAdapter;
+    private float mLastY = -1;//记录手指滑动的位置
+    private boolean isPullToRefreshEnabled = true;
+    private boolean isLoadMoreEnabled = true;
+    private BaseRefreshHeaderView pullToRefreshHeader;
+    private FooterView footerView;
     private SparseArray<View> headerViews;
     private SparseArray<View> footerViews;
-    private WrapAdapter wrapAdapter;
-    float mLastY = -1;
-
-    public void setPullToRefresh(boolean pullToRefresh) {
-        isPullToRefresh = pullToRefresh;
-    }
-
-    private boolean isPullToRefresh = false;
-    private BaseRefreshHeaderView pullToRefreshHeader;
+    private RefreshListener refreshListener;
 
     public XRecyclerView(Context context) {
         super(context);
@@ -45,6 +43,9 @@ public class XRecyclerView extends RecyclerView {
         headerViews = new SparseArray<>();
         footerViews = new SparseArray<>();
         pullToRefreshHeader = new ClassicRefreshHeaderView(getContext());
+        headerViews.put(0, pullToRefreshHeader);
+        footerView = new FooterView(getContext());
+        footerViews.put(0, footerView);
     }
 
     @Override
@@ -57,9 +58,9 @@ public class XRecyclerView extends RecyclerView {
                 mLastY = e.getRawY();
                 return true;
             case MotionEvent.ACTION_MOVE:
-                float deltaY = e.getRawY() - mLastY;
-                mLastY = e.getRawY();
-                if (isOnTop() && isPullToRefresh && !pullToRefreshHeader.isRefreshing()) {
+                if (isPullToRefreshEnabled && isOnTop() && !pullToRefreshHeader.isRefreshing()) {
+                    float deltaY = e.getRawY() - mLastY;
+                    mLastY = e.getRawY();
                     Log.i("recyclerView deltaY", "deltaY2 = " + deltaY);
                     pullToRefreshHeader.onMove((int) deltaY);
                     //当刷新头部高度大于0并且不是正在刷新状态的时候，recyclerView 不拦截滑动事件，否则头部高度变化有问题
@@ -71,25 +72,22 @@ public class XRecyclerView extends RecyclerView {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 mLastY = -1;
-                if (pullToRefreshHeader.isReadyToRefresh())
-                    refresh();
-                pullToRefreshHeader.onActionUp();
+                if (isPullToRefreshEnabled) {
+                    if (pullToRefreshHeader.isReadyToRefresh())
+                        if (null != refreshListener)
+                            refreshListener.refresh();
+                    pullToRefreshHeader.onActionUp();
+                }
                 break;
         }
         return super.onTouchEvent(e);
     }
 
-    private void refresh() {
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                refreshComplete();
-            }
-        }, 2000);
-    }
-
     public void refreshComplete() {
-        pullToRefreshHeader.refreshComplete();
+        if (isPullToRefreshEnabled && pullToRefreshHeader.isRefreshing())
+            pullToRefreshHeader.refreshComplete();
+        else if (isLoadMoreEnabled)
+            footerView.loadComplete();
     }
 
     private boolean isOnTop() {
@@ -120,30 +118,28 @@ public class XRecyclerView extends RecyclerView {
                 ((StaggeredGridLayoutManager) layoutManager).findLastVisibleItemPositions(into);
                 lastVisibleItemPosition = findMax(into);
             } else {
+                int fristVisible = ((LinearLayoutManager) layoutManager).findFirstCompletelyVisibleItemPosition();
                 lastVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
                 int comVisiblePos = ((LinearLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition();
-                Log.i("last visible", lastVisibleItemPosition + " >>> " + comVisiblePos);
+                Log.i("first and last visible", fristVisible + ">>>" + lastVisibleItemPosition + " >>> " + comVisiblePos);
             }
             if (layoutManager.getChildCount() > 0//判断有数据
                     && lastVisibleItemPosition >= layoutManager.getItemCount() - 1//最后一个完整可见的item的位置等于layoutmanager的最后一个item的位置
-                    && layoutManager.getItemCount() > layoutManager.getChildCount())//item总数大于可见的数量
-            {
-                View footerView = footerViews.get(0);
+                    && layoutManager.getItemCount() > layoutManager.getChildCount()//item总数大于可见的数量
+                    && isLoadMoreEnabled) {
                 footerView.setVisibility(VISIBLE);
-                postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadListener.load();
-                    }
-                }, 1000);
+                if (null != refreshListener)
+                    refreshListener.load();
+//                postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        refreshListener.load();
+//                    }
+//                }, 1000);
             }
 
         }
 
-    }
-
-    public void loadComplete() {
-        footerViews.get(0).setVisibility(GONE);
     }
 
     private int findMax(int[] lastPositions) {
@@ -157,17 +153,23 @@ public class XRecyclerView extends RecyclerView {
     }
 
     public void addHeaderView(View view) {
-        if (isPullToRefresh)//下拉刷新可用
+        if (isPullToRefreshEnabled)//下拉刷新可用
             headerViews.put(0, pullToRefreshHeader);
         headerViews.put(headerViews.size(), view);
     }
 
     public void addFooterView(View view) {
+        if (isLoadMoreEnabled)//下拉刷新可用
+            footerViews.put(0, footerView);
         footerViews.put(footerViews.size(), view);
     }
 
     @Override
     public void setAdapter(Adapter adapter) {
+        if (!isPullToRefreshEnabled)
+            removePullToRefreshHeader();
+        if (!isLoadMoreEnabled)
+            removeLoadMoreFooter();
         wrapAdapter = new WrapAdapter(adapter, headerViews, footerViews);
         super.setAdapter(wrapAdapter);
         adapter.registerAdapterDataObserver(mDataObserver);
@@ -205,16 +207,50 @@ public class XRecyclerView extends RecyclerView {
         }
     };
 
-    public void setLoadListener(LoadListener loadListener) {
-        this.loadListener = loadListener;
+    public void setPullToRefreshEnabled(boolean enabled) {
+        isPullToRefreshEnabled = enabled;
+        //只添加，不移除，保证0的位置始终是刷新头部 view 子类实例
+        //在 setAdapter 中去判断移除
+        if (enabled)
+            headerViews.put(0, pullToRefreshHeader);
     }
 
-    LoadListener loadListener;
+    private void removePullToRefreshHeader() {
+        if (headerViews.get(0) instanceof BaseRefreshHeaderView)
+            headerViews.remove(0);
+    }
 
-    public interface LoadListener {
+    public void setLoadMoreEnabled(boolean enabled) {
+        isLoadMoreEnabled = enabled;
+        if (enabled)
+            footerViews.put(0, footerView);
+
+    }
+
+    private void removeLoadMoreFooter() {
+        if (footerViews.get(0) instanceof BaseRefreshHeaderView)
+            footerViews.remove(0);
+    }
+
+    public void setRefreshListener(RefreshListener refreshListener) {
+        this.refreshListener = refreshListener;
+    }
+
+    public interface RefreshListener {
         void refresh();
 
         void load();
+    }
+
+    public void setPullToRefreshHeader(BaseRefreshHeaderView pullToRefreshHeader) {
+        if (!(pullToRefreshHeader instanceof BaseRefreshHeaderView))
+            throw new IllegalArgumentException("view should be instanceof BaseRefreshHeaderView");
+        this.pullToRefreshHeader = pullToRefreshHeader;
+        headerViews.put(0, pullToRefreshHeader);
+    }
+
+    public void setFooterView(FooterView footerView) {
+        this.footerView = footerView;
     }
 
 }

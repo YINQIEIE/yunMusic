@@ -34,6 +34,15 @@ public class FooterView extends LinearLayout {
 //        View.inflate(context, R.layout.layout_loading, this);
     }
 
+    public void loadComplete() {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setVisibility(View.GONE);
+            }
+        }, 1000);
+    }
+
     @Override
     public void setVisibility(int visibility) {
         super.setVisibility(visibility);

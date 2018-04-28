@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import com.yq.yunmusic.R;
@@ -13,7 +12,6 @@ import com.yq.yunmusic.adapter.WelfareAdapter;
 import com.yq.yunmusic.base.BaseLoadFragment;
 import com.yq.yunmusic.http.RetrofitManager;
 import com.yq.yunmusic.http.response.GankBean;
-import com.yq.yunmusic.view.FooterView;
 import com.yq.yunmusic.view.XRecyclerView;
 
 import java.util.ArrayList;
@@ -67,11 +65,9 @@ public class WelfareFragment extends BaseLoadFragment {
                 }
             }
         });
-        View loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_loading, null);
-//        rvGanks.addFooterView(loadingView);
-        rvPics.addFooterView(new FooterView(getActivity()));
+        rvPics.setPullToRefreshEnabled(false);
         rvPics.setAdapter(adapter);
-        rvPics.setLoadListener(new XRecyclerView.LoadListener() {
+        rvPics.setRefreshListener(new XRecyclerView.RefreshListener() {
             @Override
             public void refresh() {
 
@@ -100,7 +96,7 @@ public class WelfareFragment extends BaseLoadFragment {
                 if (page == 1)
                     adapter.notifyDataSetChanged();
                 else {
-                    rvPics.loadComplete();
+                    rvPics.refreshComplete();
                 }
             }
 

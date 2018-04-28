@@ -3,7 +3,6 @@ package com.yq.yunmusic.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import com.yq.yunmusic.R;
@@ -11,7 +10,6 @@ import com.yq.yunmusic.adapter.viewholder.AndroidAdapter;
 import com.yq.yunmusic.base.BaseLoadFragment;
 import com.yq.yunmusic.http.RetrofitManager;
 import com.yq.yunmusic.http.response.GankBean;
-import com.yq.yunmusic.view.FooterView;
 import com.yq.yunmusic.view.XRecyclerView;
 
 import java.util.ArrayList;
@@ -43,15 +41,16 @@ public class AndroidFragment extends BaseLoadFragment {
         list = new ArrayList<>();
         adapter = new AndroidAdapter(getActivity(), list);
         rvGanks.setLayoutManager(new LinearLayoutManager(getActivity()));
-        View mHeaderView = LayoutInflater.from(getActivity()).inflate(R.layout.header_item_gank_child, null);
-        rvGanks.setPullToRefresh(true);
-        rvGanks.addHeaderView(mHeaderView);
-        rvGanks.addFooterView(new FooterView(getActivity()));
+//        View mHeaderView = LayoutInflater.from(getActivity()).inflate(R.layout.header_item_gank_child, null);
+//        rvGanks.addHeaderView(mHeaderView);
+//        rvGanks.setPullToRefreshEnabled(false);
+//        rvGanks.setPullToRefreshHeader(new RefreshHeaderViewWithBase(getActivity()));
         rvGanks.setAdapter(adapter);
-        rvGanks.setLoadListener(new XRecyclerView.LoadListener() {
+        rvGanks.setRefreshListener(new XRecyclerView.RefreshListener() {
             @Override
             public void refresh() {
-
+                page = 1;
+                getData();
             }
 
             @Override
@@ -69,16 +68,17 @@ public class AndroidFragment extends BaseLoadFragment {
         photoCall.enqueue(new Callback<GankBean<List<GankBean.ResultBean>>>() {
             @Override
             public void onResponse(Call<GankBean<List<GankBean.ResultBean>>> call, Response<GankBean<List<GankBean.ResultBean>>> response) {
+                rvGanks.refreshComplete();//设置加载更多布局不可见
                 log(response.body().toString());
                 List<GankBean.ResultBean> data = response.body().getResults();
                 if (page == 1) list.clear();
                 list.addAll(data);
-                rvGanks.loadComplete();//设置加载更多布局不可见
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onFailure(Call<GankBean<List<GankBean.ResultBean>>> call, Throwable t) {
+                rvGanks.refreshComplete();//设置加载更多布局不可见
                 if (page > 1) page--;
             }
         });

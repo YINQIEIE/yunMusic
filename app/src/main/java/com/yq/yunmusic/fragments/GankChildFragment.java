@@ -17,7 +17,6 @@ import com.yq.yunmusic.http.RetrofitManager;
 import com.yq.yunmusic.http.response.GankBean;
 import com.yq.yunmusic.utils.BottomSheetManager;
 import com.yq.yunmusic.utils.SPUtil;
-import com.yq.yunmusic.view.FooterView;
 import com.yq.yunmusic.view.XRecyclerView;
 
 import java.util.ArrayList;
@@ -50,11 +49,11 @@ public class GankChildFragment extends BaseLoadFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         list = new ArrayList<>();
         adapter = new AndroidAdapter(getActivity(), list);
+        rvGanks.setPullToRefreshEnabled(false);
         rvGanks.setLayoutManager(new LinearLayoutManager(getActivity()));
         addHeaderView();
-        rvGanks.addFooterView(new FooterView(getActivity()));
         rvGanks.setAdapter(adapter);
-        rvGanks.setLoadListener(new XRecyclerView.LoadListener() {
+        rvGanks.setRefreshListener(new XRecyclerView.RefreshListener() {
             @Override
             public void refresh() {
 
@@ -112,16 +111,17 @@ public class GankChildFragment extends BaseLoadFragment {
         photoCall.enqueue(new Callback<GankBean<List<GankBean.ResultBean>>>() {
             @Override
             public void onResponse(Call<GankBean<List<GankBean.ResultBean>>> call, Response<GankBean<List<GankBean.ResultBean>>> response) {
+                rvGanks.refreshComplete();//设置加载更多布局不可见
                 log(response.body().toString());
                 List<GankBean.ResultBean> data = response.body().getResults();
                 if (page == 1) list.clear();
                 list.addAll(data);
-                rvGanks.loadComplete();//设置加载更多布局不可见
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onFailure(Call<GankBean<List<GankBean.ResultBean>>> call, Throwable t) {
+                rvGanks.refreshComplete();//设置加载更多布局不可见
                 if (page > 1) page--;
             }
         });
