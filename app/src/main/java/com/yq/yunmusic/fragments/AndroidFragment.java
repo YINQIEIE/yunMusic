@@ -64,7 +64,8 @@ public class AndroidFragment extends BaseLoadFragment {
 
     @Override
     protected void getData() {
-        showLoadingDialog();
+        if (!isDataLoaded)
+            showLoadingDialog();
         final Call<GankBean<List<GankBean.ResultBean>>> photoCall = RetrofitManager.getGankHttpService().getGankInfo("Android", page, 10);
         photoCall.enqueue(new Callback<GankBean<List<GankBean.ResultBean>>>() {
             @Override
