@@ -1,5 +1,7 @@
 package com.yq.yunmusic.http;
 
+import android.content.Context;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -16,7 +18,8 @@ public class RetrofitManager {
     private static HttpService httpService;
 
     private static final String GANK_URL = "http://gank.io/api/";
-    private final static String API_TING = "http://tingapi.ting.baidu.com/v1/restserver/";
+    private static final String API_TING = "http://tingapi.ting.baidu.com/v1/restserver/";
+    public static final String DOUBAN_URL = "http://api.douban.com/";
 
     public static RetrofitManager getInstance() {
         if (null == ourInstance)
@@ -57,12 +60,24 @@ public class RetrofitManager {
                 .build();
     }
 
+    private static Retrofit getDouBanRetrofit(Context context) {
+        return new Retrofit.Builder()
+                .baseUrl(DOUBAN_URL)
+                .client(OkHttpClientManager.getClient())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
     public static HttpService getGankHttpService() {
         return getGankRetrofit().create(HttpService.class);
     }
 
     public static HttpService getBannerHttpService() {
         return getBannerRetrofit().create(HttpService.class);
+    }
+
+    public static HttpService getDouBanHttpService(Context context) {
+        return getDouBanRetrofit(context).create(HttpService.class);
     }
 
 }

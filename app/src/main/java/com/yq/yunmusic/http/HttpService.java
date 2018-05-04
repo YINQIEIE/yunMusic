@@ -2,6 +2,7 @@ package com.yq.yunmusic.http;
 
 import com.yq.yunmusic.http.response.BannerBean;
 import com.yq.yunmusic.http.response.GankBean;
+import com.yq.yunmusic.http.response.MovieBean;
 
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public interface HttpService {
      * 每日数据： http://gank.io/api/day/年/月/日
      * eg:http://gank.io/api/day/2015/08/06
      */
+    @Headers("User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64)")
     @GET("day/{year}/{month}/{day}")
     Call<GankBean<Map<String, List<GankBean.ResultBean>>>> getGankIoDay(@Path("year") int year, @Path("month") int month, @Path("day") int day);
 
@@ -40,4 +42,6 @@ public interface HttpService {
     @GET("data/{type}/{per_page}/{page}")
     Call<GankBean<List<GankBean.ResultBean>>> getGankInfo(@Path("type") String type, @Path("page") int page, @Path("per_page") int per_page);
 
+    @GET("v2/movie/in_theaters")
+    Call<MovieBean> getHotMovies();
 }
