@@ -105,7 +105,8 @@ public class GankChildFragment extends BaseLoadFragment {
 
     @Override
     protected void getData() {
-        showLoadingDialog();
+        if (!isDataLoaded)
+            showLoadingDialog();
         gankKind = SPUtil.getStringValByKey(getActivity(), "gank_kind");
         gankKind = Strings.isNullOrEmpty(gankKind) ? "Android" : gankKind;
         final Call<GankBean<List<GankBean.ResultBean>>> photoCall = RetrofitManager.getGankHttpService().getGankInfo(gankKind, page, 10);
