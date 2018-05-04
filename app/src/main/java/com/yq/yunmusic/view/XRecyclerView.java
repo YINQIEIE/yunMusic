@@ -228,8 +228,7 @@ public class XRecyclerView extends RecyclerView {
     }
 
     private void removeLoadMoreFooter() {
-        if (footerViews.get(0) instanceof BaseRefreshHeaderView)
-            footerViews.remove(0);
+        footerViews.remove(0);
     }
 
     public void setRefreshListener(RefreshListener refreshListener) {
