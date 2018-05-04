@@ -78,7 +78,8 @@ public class WelfareFragment extends BaseLoadFragment {
 
     @Override
     protected void getData() {
-        showLoadingDialog();
+        if (!isDataLoaded)
+            showLoadingDialog();
         final Call<GankBean<List<GankBean.ResultBean>>> photoCall = RetrofitManager.getGankHttpService().getGankInfo("福利", page, 10);
         photoCall.enqueue(new Callback<GankBean<List<GankBean.ResultBean>>>() {
             @Override
