@@ -12,8 +12,8 @@ import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
-import com.yq.yunmusic.MainActivity;
 import com.yq.yunmusic.R;
+import com.yq.yunmusic.activity.MovieTop250Activity;
 import com.yq.yunmusic.adapter.MovieAdapter;
 import com.yq.yunmusic.base.BaseLoadFragment;
 import com.yq.yunmusic.http.RetrofitManager;
@@ -95,12 +95,14 @@ public class MovieFragment extends BaseLoadFragment {
 
     @Override
     protected void getData() {
-
+        if (!isDataLoaded)
+            showLoadingDialog();
         Call<MovieBean> hotMovies = RetrofitManager.getDouBanHttpService(getActivity()).getHotMovies();
 
         hotMovies.enqueue(new Callback<MovieBean>() {
             @Override
             public void onResponse(Call<MovieBean> call, Response<MovieBean> response) {
+                dismissLoadingDialog();
                 MovieBean body = response.body();
                 if (null != body) {
                     log(response.body().toString());
@@ -113,6 +115,7 @@ public class MovieFragment extends BaseLoadFragment {
 
             @Override
             public void onFailure(Call<MovieBean> call, Throwable t) {
+                dismissLoadingDialog();
                 log(t.getStackTrace());
             }
         });
@@ -129,7 +132,8 @@ public class MovieFragment extends BaseLoadFragment {
             headerView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent = new Intent();
+                    startNewActivity(MovieTop250Activity.class);
                 }
             });
         }

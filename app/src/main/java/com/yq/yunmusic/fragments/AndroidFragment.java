@@ -6,7 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.yq.yunmusic.R;
-import com.yq.yunmusic.adapter.viewholder.AndroidAdapter;
+import com.yq.yunmusic.adapter.AndroidAdapter;
 import com.yq.yunmusic.base.BaseLoadFragment;
 import com.yq.yunmusic.http.RetrofitManager;
 import com.yq.yunmusic.http.response.GankBean;

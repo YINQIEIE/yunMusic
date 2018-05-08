@@ -12,7 +12,7 @@ import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.yq.yunmusic.adapter.viewholder.WrapAdapter;
+import com.yq.yunmusic.adapter.WrapAdapter;
 
 /**
  * Created by Administrator on 2018/1/9.
@@ -58,6 +58,7 @@ public class XRecyclerView extends RecyclerView {
                 mLastY = e.getRawY();
                 return true;
             case MotionEvent.ACTION_MOVE:
+                Log.i("recyclerView deltaY", "is onTop  " + isOnTop());
                 if (isPullToRefreshEnabled && isOnTop() && !pullToRefreshHeader.isRefreshing()) {
                     float deltaY = e.getRawY() - mLastY;
                     mLastY = e.getRawY();
@@ -65,8 +66,10 @@ public class XRecyclerView extends RecyclerView {
                     pullToRefreshHeader.onMove((int) deltaY);
                     //当刷新头部高度大于0并且不是正在刷新状态的时候，recyclerView 不拦截滑动事件，否则头部高度变化有问题
                     //场景：下拉后手指不离开屏幕再上滑
-                    if (pullToRefreshHeader.getHeight() > 0 && !pullToRefreshHeader.isRefreshing())
-                        return false;
+//                    if (pullToRefreshHeader.getHeight() > 0 && !pullToRefreshHeader.isRefreshing()) {
+//                        Log.i("recyclerView deltaY", "onMove false");
+//                        return false;
+//                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -95,7 +98,7 @@ public class XRecyclerView extends RecyclerView {
             return false;
         }
         View view = headerViews.get(0);
-        if (view.getParent() != null) {
+        if (null != view && view.getParent() != null) {
             return true;
         } else {
             return false;

@@ -11,6 +11,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by yinqi on 2017/11/2.
@@ -44,4 +45,14 @@ public interface HttpService {
 
     @GET("v2/movie/in_theaters")
     Call<MovieBean> getHotMovies();
+
+    /**
+     * 获取豆瓣电影top250
+     *
+     * @param start 从多少开始，如从"0"开始
+     * @param count 一次请求的数目，如"10"条，最多100
+     */
+    @GET("v2/movie/top250")
+    Call<MovieBean> getMovieTop250(@Query("start") int start, @Query("count") int count);
+
 }

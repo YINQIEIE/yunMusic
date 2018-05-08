@@ -1,4 +1,4 @@
-package com.yq.yunmusic.adapter.viewholder;
+package com.yq.yunmusic.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;

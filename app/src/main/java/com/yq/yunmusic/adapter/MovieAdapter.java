@@ -1,6 +1,10 @@
 package com.yq.yunmusic.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yq.yunmusic.R;
+import com.yq.yunmusic.activity.MovieDetailActivity;
 import com.yq.yunmusic.http.response.MovieBean;
 import com.yq.yunmusic.utils.ImgLoadUtil;
 
@@ -82,7 +87,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ItemHolder> 
         holder.itemView.clearAnimation();
     }
 
-    public static class ItemHolder extends RecyclerView.ViewHolder {
+    public class ItemHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.iv_photo)
         ImageView ivPhoto;
@@ -100,6 +105,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ItemHolder> 
         public ItemHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, MovieDetailActivity.class);
+                    ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, ivPhoto, mContext.getString(R.string.movie_transition));
+                    ActivityCompat.startActivity(mContext, intent, optionsCompat.toBundle());
+                }
+            });
         }
 
     }

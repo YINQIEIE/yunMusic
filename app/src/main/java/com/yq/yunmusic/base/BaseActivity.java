@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.yq.yunmusic.LoadingDialog;
 import com.yq.yunmusic.R;
 import com.yq.yunmusic.statusbar.StatusBarUtil;
 
@@ -16,8 +17,10 @@ import butterknife.ButterKnife;
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
+
     protected final String TAG = this.getClass().getSimpleName();
     private Intent intent;
+    private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,6 +70,18 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void setFinishTransaction() {
         overridePendingTransition(R.anim.activity_left_in, R.anim.activity_right_out);
+    }
+
+    protected void showLoadingDialog() {
+        if (null == loadingDialog)
+            loadingDialog = new LoadingDialog(this);
+        if (!loadingDialog.isShowing())
+            loadingDialog.show();
+    }
+
+    protected void dismissLoadingDialog() {
+        if (null != loadingDialog && loadingDialog.isShowing())
+            loadingDialog.dismiss();
     }
 
 }

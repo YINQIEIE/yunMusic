@@ -1,4 +1,4 @@
-package com.yq.yunmusic.adapter.viewholder;
+package com.yq.yunmusic.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
