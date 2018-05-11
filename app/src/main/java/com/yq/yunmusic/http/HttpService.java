@@ -3,6 +3,7 @@ package com.yq.yunmusic.http;
 import com.yq.yunmusic.http.response.BannerBean;
 import com.yq.yunmusic.http.response.GankBean;
 import com.yq.yunmusic.http.response.MovieBean;
+import com.yq.yunmusic.http.response.MovieDetailBean;
 
 import java.util.List;
 import java.util.Map;
@@ -54,5 +55,13 @@ public interface HttpService {
      */
     @GET("v2/movie/top250")
     Call<MovieBean> getMovieTop250(@Query("start") int start, @Query("count") int count);
+
+    /**
+     * 获取电影详情
+     *
+     * @param id 电影bean里的id
+     */
+    @GET("v2/movie/subject/{id}")
+    Call<MovieDetailBean> getMovieDetail(@Path("id") String id);
 
 }

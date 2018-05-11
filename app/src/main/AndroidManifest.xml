@@ -41,7 +41,9 @@
         <activity android:name=".activity.WebViewActivity" />
 
         <activity android:name=".activity.MovieTop250Activity" />
-        <activity android:name=".activity.MovieDetailActivity" />
+        <activity
+            android:name=".activity.MovieDetailActivity"
+            android:theme="@style/MyTheme.TranslucentStatusBar" />
 
     </application>
 

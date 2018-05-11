@@ -132,6 +132,13 @@ public class ImgLoadUtil {
                 .into(imageView);
     }
 
+    public static void showImg(ImageView imageView, String url) {
+        Glide.with(imageView.getContext())
+                .load(url)
+                .crossFade(500)
+                .error(getDefaultPic(0))
+                .into(imageView);
+    }
 //    /**
 //     * 妹子，电影列表图
 //     *

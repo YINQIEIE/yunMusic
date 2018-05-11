@@ -1,10 +1,6 @@
 package com.yq.yunmusic.adapter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +14,7 @@ import com.yq.yunmusic.R;
 import com.yq.yunmusic.activity.MovieDetailActivity;
 import com.yq.yunmusic.http.response.MovieBean;
 import com.yq.yunmusic.utils.ImgLoadUtil;
+import com.yq.yunmusic.utils.MovieUtil;
 
 import java.util.List;
 
@@ -54,31 +51,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ItemHolder> 
         }
         lastAnimPostion = position;
         MovieBean.SubjectsBean bean = data.get(position);
+        holder.setBean(bean);
         ImgLoadUtil.displayImage(mContext, bean.getImages().getLarge(), holder.ivPhoto);
         holder.tvTitle.setText(bean.getTitle());
-        holder.tvDirectors.setText(getFormatName(bean.getDirectors()));
-        holder.tvCasts.setText(getFormatName(bean.getCasts()));
-        holder.tvGenres.setText(String.format("类型：%s", getFormatGenres(bean.getGenres())));
+        holder.tvDirectors.setText(MovieUtil.getFormatName(bean.getDirectors()));
+        holder.tvCasts.setText(MovieUtil.getFormatName(bean.getCasts()));
+        holder.tvGenres.setText(String.format("类型：%s", MovieUtil.getFormatString(bean.getGenres())));
         holder.tvRatingRate.setText(String.format("评分：%s", bean.getRating().getAverage() + ""));
-    }
-
-    private String getFormatName(List<MovieBean.SubjectsBean.PersonBean> list) {
-        if (list.isEmpty()) return "";
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < list.size(); i++) {
-            stringBuilder.append(list.get(i).getName())
-                    .append("/");
-        }
-        return stringBuilder.substring(0, stringBuilder.length() - 1);
-    }
-
-    private String getFormatGenres(List<String> list) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < list.size(); i++) {
-            stringBuilder.append(list.get(i))
-                    .append("/");
-        }
-        return stringBuilder.substring(0, stringBuilder.length() - 1);
     }
 
     @Override
@@ -102,17 +81,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ItemHolder> 
         @BindView(R.id.tv_rating_rate)
         TextView tvRatingRate;
 
+        MovieBean.SubjectsBean bean;
+
         public ItemHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, MovieDetailActivity.class);
-                    ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) mContext, ivPhoto, mContext.getString(R.string.movie_transition));
-                    ActivityCompat.startActivity(mContext, intent, optionsCompat.toBundle());
+                    MovieDetailActivity.start(mContext, bean, ivPhoto);
                 }
             });
+        }
+
+        public void setBean(MovieBean.SubjectsBean bean) {
+            this.bean = bean;
         }
 
     }
