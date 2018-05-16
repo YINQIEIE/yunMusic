@@ -137,19 +137,17 @@ public class MovieDetailActivity extends BaseActivity {
                 return false;
             }
         }).into(ivBg);
-//        setActors();
+        setActors();
         getMovieDetais();
     }
 
     private void setActors() {
-        rvCasts.setVisibility(View.VISIBLE);
         ActorsAdapter adapter = new ActorsAdapter(this, subjectsBean.getDirectors());
         adapter.addActors(subjectsBean.getCasts());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rvCasts.setLayoutManager(layoutManager);
         rvCasts.setAdapter(adapter);
-        rvCasts.setHasFixedSize(false);
-        rvCasts.setNestedScrollingEnabled(false);
+        rvCasts.setHasFixedSize(true);
     }
 
     private void getMovieDetais() {
