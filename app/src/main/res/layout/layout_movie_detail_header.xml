@@ -27,7 +27,6 @@
                 android:layout_width="125dp"
                 android:layout_height="165dp"
                 android:layout_marginRight="15dp"
-                android:background="@mipmap/ic_launcher"
                 android:scaleType="fitXY"
                 android:transitionName="@string/movie_transition" />
 
