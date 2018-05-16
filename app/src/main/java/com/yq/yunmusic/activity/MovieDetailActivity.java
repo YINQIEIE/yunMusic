@@ -10,6 +10,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.SharedElementCallback;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +31,8 @@ import com.yq.yunmusic.http.response.MovieBean;
 import com.yq.yunmusic.http.response.MovieDetailBean;
 import com.yq.yunmusic.utils.ImgLoadUtil;
 import com.yq.yunmusic.utils.MovieUtil;
+
+import java.util.List;
 
 import butterknife.BindView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
@@ -77,7 +80,13 @@ public class MovieDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         subjectsBean = (MovieBean.SubjectsBean) getIntent().getSerializableExtra("movieInfo");
         initToolBar();
-        initMovieInfo();
+        //在 transition 动画结束后再请求信息，否则在上个页面会看到加载 dialog
+        setEnterSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+                initMovieInfo();
+            }
+        });
     }
 
     @Override
@@ -117,6 +126,9 @@ public class MovieDetailActivity extends BaseActivity {
     }
 
     private void initMovieInfo() {
+        //删除 transition 动画监听，否则会有异常
+        setEnterSharedElementCallback(new SharedElementCallback() {
+        });
         showLoadingDialog();
         ImgLoadUtil.displayImage(this, subjectsBean.getImages().getLarge(), ivPhoto);
         tvRating.setText("评分：" + subjectsBean.getRating().getAverage());
