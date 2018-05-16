@@ -117,6 +117,7 @@ public class MovieDetailActivity extends BaseActivity {
     }
 
     private void initMovieInfo() {
+        showLoadingDialog();
         ImgLoadUtil.displayImage(this, subjectsBean.getImages().getLarge(), ivPhoto);
         tvRating.setText("评分：" + subjectsBean.getRating().getAverage());
         tvRatingNumber.setText(String.format("%d人评分", subjectsBean.getCollect_count()));
@@ -137,17 +138,7 @@ public class MovieDetailActivity extends BaseActivity {
                 return false;
             }
         }).into(ivBg);
-        setActors();
         getMovieDetais();
-    }
-
-    private void setActors() {
-        ActorsAdapter adapter = new ActorsAdapter(this, subjectsBean.getDirectors());
-        adapter.addActors(subjectsBean.getCasts());
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rvCasts.setLayoutManager(layoutManager);
-        rvCasts.setAdapter(adapter);
-        rvCasts.setHasFixedSize(true);
     }
 
     private void getMovieDetais() {
@@ -155,6 +146,7 @@ public class MovieDetailActivity extends BaseActivity {
         movieDetailCall.enqueue(new Callback<MovieDetailBean>() {
             @Override
             public void onResponse(Call<MovieDetailBean> call, Response<MovieDetailBean> response) {
+                dismissLoadingDialog();
                 MovieDetailBean body = response.body();
                 if (null != body) {
                     log(body.toString());
@@ -168,9 +160,19 @@ public class MovieDetailActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<MovieDetailBean> call, Throwable t) {
-
+                dismissLoadingDialog();
             }
         });
+    }
+
+    private void setActors() {
+        ActorsAdapter adapter = new ActorsAdapter(this, subjectsBean.getDirectors());
+        adapter.addActors(subjectsBean.getCasts());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rvCasts.setLayoutManager(layoutManager);
+        rvCasts.setHasFixedSize(false);
+        rvCasts.setAdapter(adapter);
+        rvCasts.setVisibility(View.VISIBLE);
     }
 
     /**

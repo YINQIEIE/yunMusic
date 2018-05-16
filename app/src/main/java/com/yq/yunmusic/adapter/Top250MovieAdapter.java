@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yq.yunmusic.R;
+import com.yq.yunmusic.activity.MovieDetailActivity;
 import com.yq.yunmusic.http.response.MovieBean;
 import com.yq.yunmusic.utils.ImgLoadUtil;
 
@@ -36,6 +37,7 @@ public class Top250MovieAdapter extends RecyclerView.Adapter<Top250MovieAdapter.
     @Override
     public void onBindViewHolder(ItemHolder holder, int position) {
         MovieBean.SubjectsBean bean = data.get(position);
+        holder.setBean(bean);
         ImgLoadUtil.displayImage(mContext, bean.getImages().getLarge(), holder.ivPhoto);
         holder.tvName.setText(bean.getTitle());
         holder.tvRate.setText("评分：" + bean.getRating().getAverage());
@@ -46,7 +48,7 @@ public class Top250MovieAdapter extends RecyclerView.Adapter<Top250MovieAdapter.
         return data.size();
     }
 
-    public static class ItemHolder extends RecyclerView.ViewHolder {
+    public class ItemHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.iv_photo)
         ImageView ivPhoto;
@@ -55,10 +57,23 @@ public class Top250MovieAdapter extends RecyclerView.Adapter<Top250MovieAdapter.
         @BindView(R.id.tv_rate)
         TextView tvRate;
 
+        MovieBean.SubjectsBean bean;
+
         public ItemHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MovieDetailActivity.start(mContext, bean, ivPhoto);
+                }
+            });
         }
+
+        public void setBean(MovieBean.SubjectsBean bean) {
+            this.bean = bean;
+        }
+
 
     }
 

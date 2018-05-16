@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yq.yunmusic.R;
+import com.yq.yunmusic.activity.WebViewActivity;
 import com.yq.yunmusic.http.response.PersonBean;
 import com.yq.yunmusic.utils.ImgLoadUtil;
 
@@ -62,6 +63,12 @@ public class ActorsAdapter extends BaseAdapter<PersonBean, ActorsAdapter.ItemHol
         public ItemHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    WebViewActivity.loadUrl(mContext, data.get(getAdapterPosition()).getAlt(), "");
+                }
+            });
         }
 
     }
