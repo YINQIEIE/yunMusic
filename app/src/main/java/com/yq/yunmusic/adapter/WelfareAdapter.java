@@ -9,8 +9,10 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.yq.yunmusic.R;
+import com.yq.yunmusic.activity.PicViewActivity;
 import com.yq.yunmusic.http.response.GankBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -57,6 +59,16 @@ public class WelfareAdapter extends RecyclerView.Adapter<WelfareAdapter.ItemHold
         public ItemHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    List<String> pics = new ArrayList<>(data.size());
+                    for (int i = 0; i < data.size(); i++) {
+                        pics.add(data.get(i).getUrl());
+                    }
+                    PicViewActivity.start(mContext, pics, getAdapterPosition());
+                }
+            });
         }
     }
 

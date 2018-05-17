@@ -12,10 +12,17 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
+import android.os.Environment;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Created by yinqi on 2017/9/9.
@@ -151,6 +158,27 @@ public class BitmapHelper {
             return outputBitmap;
         }
         return image;
+    }
+
+    public static File saveBitmap(Context context, Bitmap bitmap) {
+        if (null == bitmap) return null;
+        File picFile = null;
+        try {
+            File dir = new File(Environment.getExternalStorageDirectory(), "beauty");
+            if (!dir.exists()) {
+                Log.i("saveBitmap: ", "mkdirs = " + dir.mkdirs());
+            }
+            picFile = new File(dir, System.currentTimeMillis() + ".jpg");
+            FileOutputStream fos = new FileOutputStream(picFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return picFile;
     }
 
 }
