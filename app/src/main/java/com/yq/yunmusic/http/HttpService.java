@@ -1,5 +1,6 @@
 package com.yq.yunmusic.http;
 
+import com.yq.yunmusic.entity.BookInfo;
 import com.yq.yunmusic.http.response.BannerBean;
 import com.yq.yunmusic.http.response.GankBean;
 import com.yq.yunmusic.http.response.MovieBean;
@@ -63,5 +64,18 @@ public interface HttpService {
      */
     @GET("v2/movie/subject/{id}")
     Call<MovieDetailBean> getMovieDetail(@Path("id") String id);
+
+    /**
+     * 根据tag获取图书
+     *
+     * @param tag   搜索关键字
+     * @param count 一次请求的数目 最多100
+     */
+
+    @GET("v2/book/search")
+    Call<BookInfo> getBook(@Query("tag") String tag, @Query("start") int start, @Query("count") int count);
+
+    @GET("v2/book/{id}")
+    Call getBookDetail(@Path("id") String id);
 
 }

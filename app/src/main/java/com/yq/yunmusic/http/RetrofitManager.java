@@ -19,7 +19,7 @@ public class RetrofitManager {
 
     private static final String GANK_URL = "http://gank.io/api/";
     private static final String API_TING = "http://tingapi.ting.baidu.com/v1/restserver/";
-    public static final String DOUBAN_URL = "http://api.douban.com/";
+    public static final String DOUBAN_URL = "https://api.douban.com/";
 
     public static RetrofitManager getInstance() {
         if (null == ourInstance)
@@ -63,7 +63,7 @@ public class RetrofitManager {
     private static Retrofit getDouBanRetrofit(Context context) {
         return new Retrofit.Builder()
                 .baseUrl(DOUBAN_URL)
-                .client(OkHttpClientManager.getClient())
+                .client(OkHttpClientManager.getHttpsClient(context))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }

@@ -20,6 +20,12 @@
         <item>干货定制</item>
         <item>大安卓</item>
     </string-array>
+    <!--第二页标题-->
+    <string-array name="titles_book">
+        <item>文学</item>
+        <item>文化</item>
+        <item>生活</item>
+    </string-array>
 
     <!--本地音乐标题-->
     <string-array name="titles_local_music">
@@ -39,6 +45,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="movie_transition">movie transition</string>
+    <string name="book_transition">book transition</string>
 
     <string name="large_text">
         "Material is the metaphor.\n\n"

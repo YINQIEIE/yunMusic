@@ -18,10 +18,10 @@ import android.widget.LinearLayout;
 import com.yq.yunmusic.adapter.MyFragmentAdapter;
 import com.yq.yunmusic.base.BaseActivity;
 import com.yq.yunmusic.base.BaseFragment;
+import com.yq.yunmusic.fragments.BookFragment;
 import com.yq.yunmusic.fragments.GankFragment;
 import com.yq.yunmusic.fragments.LocalFragment;
 import com.yq.yunmusic.fragments.MovieFragment;
-import com.yq.yunmusic.fragments.SongsFragment;
 import com.yq.yunmusic.statusbar.StatusBarUtil;
 import com.yq.yunmusic.utils.BitmapHelper;
 
@@ -76,8 +76,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
         headerView = navigationView.getHeaderView(0);
-        ImageView imageView = (ImageView) headerView.findViewById(R.id.iv_avater);
-        LinearLayout ll_nav_header = (LinearLayout) headerView.findViewById(R.id.ll_nav_header);
+        ImageView imageView = headerView.findViewById(R.id.iv_avater);
+        LinearLayout ll_nav_header = headerView.findViewById(R.id.ll_nav_header);
         ll_nav_header.setBackground(new BitmapDrawable(BitmapHelper.getBluredBitmap(getApplicationContext(), R.mipmap.nav_header_bac, 4)));
         imageView.setImageBitmap(BitmapHelper.getRoundCornerBitmapWithBorder(getResources(), R.mipmap.icon_avater, 14));
         initViewPager();
@@ -88,9 +88,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         fragments.add(new LocalFragment());
         fragments.add(new GankFragment());
         fragments.add(new MovieFragment());
-        for (int i = 1; i < 2; i++) {
-            fragments.add(new SongsFragment());
-        }
+        fragments.add(new BookFragment());
         adapter = new MyFragmentAdapter(getSupportFragmentManager(), fragments, titles);
         viewpager.setOffscreenPageLimit(fragments.size() - 1);
         viewpager.setAdapter(adapter);

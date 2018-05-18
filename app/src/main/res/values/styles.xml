@@ -90,4 +90,12 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="style_detail_header">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_margin">4dp</item>
+    </style>
+
 </resources>

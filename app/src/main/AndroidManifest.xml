@@ -45,6 +45,9 @@
         <activity
             android:name=".activity.MovieDetailActivity"
             android:theme="@style/MyTheme.TranslucentStatusBar" />
+        <activity
+            android:name=".activity.BookDetailActivity"
+            android:theme="@style/MyTheme.TranslucentStatusBar" />
 
         <activity android:name=".activity.PicViewActivity" />
 

@@ -97,7 +97,7 @@ public class EveryDayRecFragment extends BaseLoadFragment {
     @Override
     protected void getData() {
         calendar = Calendar.getInstance();
-        getContent();
+//        getContent();
         getBannerInfo();
     }
 
