@@ -10,9 +10,10 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.SharedElementCallback;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,8 +27,6 @@ import com.yq.yunmusic.base.BaseActivity;
 import com.yq.yunmusic.entity.BookBean;
 import com.yq.yunmusic.utils.ImgLoadUtil;
 
-import java.util.List;
-
 import butterknife.BindView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 
@@ -37,6 +36,8 @@ public class BookDetailActivity extends BaseActivity {
     AppBarLayout appBar;
     @BindView(R.id.toolbar_layout)
     CollapsingToolbarLayout toolbarLayout;
+    @BindView(R.id.toolbar_parent)
+    Toolbar toolbarParent;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.iv_photo)
@@ -67,13 +68,7 @@ public class BookDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         bookBean = (BookBean) getIntent().getSerializableExtra("bookInfo");
         initToolBar();
-        //在 transition 动画结束后再请求信息，否则在上个页面会看到加载 dialog
-        setEnterSharedElementCallback(new SharedElementCallback() {
-            @Override
-            public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-                initBookInfo();
-            }
-        });
+        initBookInfo();
     }
 
     @Override
@@ -83,6 +78,7 @@ public class BookDetailActivity extends BaseActivity {
 
     private void initToolBar() {
         setSupportActionBar(toolbar);
+        toolbar.inflateMenu(R.menu.toolbar_menu);
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(bookBean.getTitle());
@@ -103,11 +99,7 @@ public class BookDetailActivity extends BaseActivity {
                 log("alpha-maxOff = " + appBarLayout.getTotalScrollRange());
                 float ratio = (float) Math.abs(verticalOffset) / appBarLayout.getTotalScrollRange();
                 //不要标题栏渐变
-                toolbar.setBackgroundColor(changeAlpha(Color.WHITE, ratio * 0.4f));
-//                if (ratio == 0)
-//                    toolbar.setTitleTextColor(Color.WHITE);
-//                else
-//                    toolbar.setTitleTextColor(changeAlpha(Color.BLACK, ratio));
+                toolbarParent.setBackgroundColor(changeAlpha(Color.WHITE, ratio * 0.4f));
             }
         });
     }
@@ -126,10 +118,6 @@ public class BookDetailActivity extends BaseActivity {
                 return false;
             }
         }).into(ivBg);
-        //删除 transition 动画监听，否则会有异常
-        setEnterSharedElementCallback(new SharedElementCallback() {
-        });
-//        showLoadingDialog();
         ImgLoadUtil.displayImage(this, bookBean.getImages().getMedium(), ivPhoto);
         tvAuthor.setText("作者：" + bookBean.getAuthor());
         tvRating.setText("评分：" + bookBean.getRating().getAverage());
@@ -139,28 +127,6 @@ public class BookDetailActivity extends BaseActivity {
         tvSummary.setText(bookBean.getSummary());
         tvAuthorIntr.setText(bookBean.getAuthor_intro());
         tvCatalog.setText(bookBean.getCatalog());
-        getBookDetails();
-    }
-
-    private void getBookDetails() {
-//        Call movieDetailCall = RetrofitManager.getDouBanHttpService(this).getBookDetail(bookBean.getId());
-//        movieDetailCall.enqueue(new Callback<MovieDetailBean>() {
-//            @Override
-//            public void onResponse(Call<MovieDetailBean> call, Response<MovieDetailBean> response) {
-//                dismissLoadingDialog();
-//                MovieDetailBean body = response.body();
-//                if (null != body) {
-//                    log(body.toString());
-//                    tvSummary.setText(body.getSummary());
-//                    setActors();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<MovieDetailBean> call, Throwable t) {
-//                dismissLoadingDialog();
-//            }
-//        });
     }
 
     /**
@@ -177,6 +143,25 @@ public class BookDetailActivity extends BaseActivity {
     @Override
     protected void setTheme() {
 
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.toolbar_more:
+                WebViewActivity.loadUrl(this, bookBean.getAlt(), "");
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     public static void start(Context context, BookBean bean, ImageView ivPhoto) {
