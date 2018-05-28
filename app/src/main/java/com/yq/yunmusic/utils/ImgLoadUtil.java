@@ -132,6 +132,13 @@ public class ImgLoadUtil {
                 .into(imageView);
     }
 
+    public static void displayImageWithoutPlaceHolder(Context context, String url, ImageView imageView) {
+        Glide.with(context).load(url)
+                .error(R.drawable.img_two_bi_one)
+                .crossFade(1000)
+                .into(imageView);
+    }
+
     public static void showImg(ImageView imageView, String url) {
         Glide.with(imageView.getContext())
                 .load(url)

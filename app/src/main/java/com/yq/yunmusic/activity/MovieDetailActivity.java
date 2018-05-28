@@ -15,6 +15,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -130,7 +132,7 @@ public class MovieDetailActivity extends BaseActivity {
         setEnterSharedElementCallback(new SharedElementCallback() {
         });
         showLoadingDialog();
-        ImgLoadUtil.displayImage(this, subjectsBean.getImages().getLarge(), ivPhoto);
+        ImgLoadUtil.displayImageWithoutPlaceHolder(this, subjectsBean.getImages().getLarge(), ivPhoto);
         tvRating.setText("评分：" + subjectsBean.getRating().getAverage());
         tvRatingNumber.setText(String.format("%d人评分", subjectsBean.getCollect_count()));
         tvDirector.setText(MovieUtil.getFormatName(subjectsBean.getDirectors()));
@@ -201,6 +203,24 @@ public class MovieDetailActivity extends BaseActivity {
     @Override
     protected void setTheme() {
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.toolbar_more:
+                WebViewActivity.loadUrl(this, subjectsBean.getAlt(), "");
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public static void start(Context context, MovieBean.SubjectsBean bean, ImageView ivPhoto) {

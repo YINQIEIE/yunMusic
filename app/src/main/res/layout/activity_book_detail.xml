@@ -22,8 +22,7 @@
             <include
                 layout="@layout/layout_book_detail_header"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="82dp" />
+                android:layout_height="wrap_content" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar_parent"
@@ -38,7 +37,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:layout_marginTop="26dp"
-                    android:popupTheme="@style/AppTheme.PopupOverlay" />
+                    android:popupTheme="@style/AppTheme.PopupOverlay"
+                    app:subtitleTextAppearance="@style/Toolbar.SubTitle" />
 
             </android.support.v7.widget.Toolbar>
 

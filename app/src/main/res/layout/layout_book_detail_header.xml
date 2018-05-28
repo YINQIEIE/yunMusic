@@ -17,15 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="40dp"
-            android:layout_marginTop="82dp"
+            android:layout_marginTop="90dp"
             android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/iv_photo"
-                android:layout_width="125dp"
-                android:layout_height="165dp"
+                android:layout_width="wrap_content"
+                android:layout_height="160dp"
                 android:layout_marginLeft="20dp"
-                android:scaleType="centerCrop"
+                android:minWidth="120dp"
+                android:scaleType="fitCenter"
                 android:transitionName="@string/book_transition" />
 
             <LinearLayout

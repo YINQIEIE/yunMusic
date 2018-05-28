@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/themeColor</item>
         <item name="colorPrimaryDark">@color/themeColor</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:itemBackground">@android:color/white</item>
     </style>
 
     <style name="SplashStyle" parent="AppTheme">

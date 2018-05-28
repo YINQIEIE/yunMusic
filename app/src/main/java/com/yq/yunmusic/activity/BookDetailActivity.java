@@ -19,13 +19,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.yq.yunmusic.R;
 import com.yq.yunmusic.base.BaseActivity;
 import com.yq.yunmusic.entity.BookBean;
 import com.yq.yunmusic.utils.ImgLoadUtil;
+import com.yq.yunmusic.utils.MovieUtil;
 
 import butterknife.BindView;
 import jp.wasabeef.glide.transformations.BlurTransformation;
@@ -82,6 +80,7 @@ public class BookDetailActivity extends BaseActivity {
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(bookBean.getTitle());
+        actionBar.setSubtitle(MovieUtil.getFormatString(bookBean.getAuthor()) + " 著");
         //设置toolbar_layout 是否显示标题
         //true 显示，toolbar 标题会随着页面滑动切换位置
         //false 不显示，标题固定在 toolbar 标题位置不动
@@ -107,23 +106,13 @@ public class BookDetailActivity extends BaseActivity {
     private void initBookInfo() {
         Glide.with(this).load(bookBean.getImages().getMedium())
                 .error(R.drawable.stackblur_default)
-                .bitmapTransform(new BlurTransformation(this, 23, 4)).listener(new RequestListener<String, GlideDrawable>() {
-            @Override
-            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                return false;
-            }
-
-            @Override
-            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                return false;
-            }
-        }).into(ivBg);
-        ImgLoadUtil.displayImage(this, bookBean.getImages().getMedium(), ivPhoto);
+                .bitmapTransform(new BlurTransformation(this, 23, 4)).into(ivBg);
+        ImgLoadUtil.displayImageWithoutPlaceHolder(this, bookBean.getImages().getMedium(), ivPhoto);
         tvAuthor.setText("作者：" + bookBean.getAuthor());
         tvRating.setText("评分：" + bookBean.getRating().getAverage());
         tvRatingNumber.setText(String.format("%d人评分", bookBean.getRating().getNumRaters()));
         tvPubDate.setText("出版时间：" + bookBean.getPubdate());
-        tvPublisher.setText(bookBean.getPublisher());
+        tvPublisher.setText("出版社：" + bookBean.getPublisher());
         tvSummary.setText(bookBean.getSummary());
         tvAuthorIntr.setText(bookBean.getAuthor_intro());
         tvCatalog.setText(bookBean.getCatalog());
