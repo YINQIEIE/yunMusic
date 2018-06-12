@@ -1,5 +1,8 @@
 package com.yq.yunmusic.http.response;
 
+import android.arch.persistence.room.Ignore;
+
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -39,7 +42,9 @@ public class GankBean<T> {
         this.results = results;
     }
 
-    public static class ResultBean {
+    public static class ResultBean implements Serializable {
+
+        private static final long serialVersionUID = -571428734473301772L;
         /**
          * _id : 56cc6d23421aa95caa707a69
          * createdAt : 2015-08-06T07:15:52.65Z
@@ -51,16 +56,31 @@ public class GankBean<T> {
          * who : mthli
          */
 
-        private String name;
-        private String _id;
-        private String createdAt;
-        private String desc;
-        private String publishedAt;
-        private String type;
-        private String url;
-        private boolean used;
-        private String who;
-        private List<String> images;
+        protected String _id;
+        protected String name;
+        protected String createdAt;
+        protected String desc;
+        protected String publishedAt;
+        protected String type;
+        protected String url;
+        protected boolean used;
+        protected String who;
+        @Ignore
+        protected List<String> images;
+
+        public ResultBean(String _id, String name, String createdAt, String desc, String publishedAt, String type, String url, boolean used, String who, List<String> images, String imageUrl) {
+            this._id = _id;
+            this.name = name;
+            this.createdAt = createdAt;
+            this.desc = desc;
+            this.publishedAt = publishedAt;
+            this.type = type;
+            this.url = url;
+            this.used = used;
+            this.who = who;
+            this.images = images;
+            this.imageUrl = imageUrl;
+        }
 
         public String getImageUrl() {
             return imageUrl;
@@ -70,7 +90,7 @@ public class GankBean<T> {
             this.imageUrl = imageUrl;
         }
 
-        private String imageUrl;
+        protected String imageUrl;
 
         public ResultBean() {
         }

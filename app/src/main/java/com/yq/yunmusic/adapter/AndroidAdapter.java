@@ -71,7 +71,8 @@ public class AndroidAdapter extends RecyclerView.Adapter<AndroidAdapter.ItemHold
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                WebViewActivity.loadUrl(mContext, gank.getUrl(), gank.getName());
+//                WebViewActivity.loadUrl(mContext, gank.getUrl(), gank.getName());
+                WebViewActivity.loadUrl(mContext, gank);
             }
         });
     }

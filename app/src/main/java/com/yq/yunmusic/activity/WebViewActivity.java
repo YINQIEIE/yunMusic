@@ -2,10 +2,14 @@ package com.yq.yunmusic.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
@@ -19,8 +23,18 @@ import android.widget.ProgressBar;
 
 import com.yq.yunmusic.R;
 import com.yq.yunmusic.base.BaseActivity;
+import com.yq.yunmusic.http.response.AppDatabase;
+import com.yq.yunmusic.http.response.BlogBean;
+import com.yq.yunmusic.http.response.GankBean;
+
+import java.lang.reflect.Method;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class WebViewActivity extends BaseActivity {
 
@@ -32,6 +46,9 @@ public class WebViewActivity extends BaseActivity {
     FrameLayout parent;
     private WebView webView;
     private String webUrl;
+    boolean hasLoaded = false;
+    private GankBean.ResultBean info;
+    private Disposable dbSubscribe;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +73,11 @@ public class WebViewActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_web_view;
+    }
+
     private void initWebView() {
         webView = new WebView(this.getApplication());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
@@ -72,15 +94,32 @@ public class WebViewActivity extends BaseActivity {
             public void onReceivedTitle(WebView view, String title) {
                 toolbar.setTitle(title);
             }
-
         });
         webView.setWebViewClient(new WebViewClient() {
+            /**
+             * {@link #shouldOverrideUrlLoading 不一定走}
+             * @param view
+             * @param url
+             * @param favicon
+             */
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                if (!hasLoaded) {
+                    hasLoaded = true;
+//                    webUrl = url;
+                    view.loadUrl(url);
+                }
+                super.onPageStarted(view, url, favicon);
+            }
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                log("override" + url);
-                webUrl = url;
-                view.loadUrl(url);
-                return false;
+                if (!hasLoaded) {
+                    hasLoaded = true;
+//                    webUrl = url;
+                    view.loadUrl(url);
+                }
+                return true;
             }
         });
         WebSettings webSettings = webView.getSettings();
@@ -109,13 +148,11 @@ public class WebViewActivity extends BaseActivity {
         //排版适应屏幕
         webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        webView.loadUrl(getIntent().getStringExtra("url"));
+        info = (GankBean.ResultBean) getIntent().getExtras().get("info");
+        log(info.toString());
+        webView.loadUrl(webUrl = info.getUrl());
+        log("from intent" + webUrl);
         parent.addView(webView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    }
-
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.activity_web_view;
     }
 
     @Override
@@ -124,6 +161,90 @@ public class WebViewActivity extends BaseActivity {
             webView.goBack();
         else
             super.onBackPressed();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        setOptionalIconsVisibility(menu);
+        getMenuInflater().inflate(R.menu.web_toolbar_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * 利用方式设置 menu item 图标可见
+     *
+     * @param menu
+     */
+    private void setOptionalIconsVisibility(Menu menu) {
+        try {
+            if (null != menu) {
+                Method method = MenuBuilder.class.getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+                method.setAccessible(true);
+                method.invoke(menu, true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.share:
+
+                break;
+            case R.id.collection://收藏
+                collectBlog();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    /**
+     * 收藏博客
+     */
+    private void collectBlog() {
+//        DbManager dbManager = new DbManager(this);
+//        List<String> list = dbManager.queryAllBlogs();
+//        for (int i = 0; i < list.size(); i++) {
+//            log(list.get(i));
+//        }
+//        if (dbManager.addBlog(webUrl))
+//            toast("收藏成功");
+        final BlogBean blogBean = new BlogBean(info);
+        AppDatabase.getInstance(WebViewActivity.this).getBlogDao().insertSingleBlog(blogBean);
+        dbSubscribe = Observable.create((ObservableOnSubscribe<Long>) e -> AppDatabase.getInstance(WebViewActivity.this).getBlogDao().insertSingleBlog(blogBean)).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(id -> {
+                    if (id > 0) {
+                        toast("收藏成功");
+                        if (!dbSubscribe.isDisposed())
+                            dbSubscribe.dispose();
+                    }
+                }, throwable -> {
+                    toast("收藏失败");
+                    if (!dbSubscribe.isDisposed())
+                        dbSubscribe.dispose();
+                });
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                super.run();
+//                BlogBean blogBean = new BlogBean(info);
+//                log(AppDatabase.getInstance(WebViewActivity.this).getBlogDao().insertSingleBlog(blogBean));
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                List<BlogBean> blogs = AppDatabase.getInstance(WebViewActivity.this).getBlogDao().findAll();
+//                for (int i = 0; i < blogs.size(); i++) {
+//                    log(blogs.get(i).toString());
+//                }
+//            }
+//        }.start();
     }
 
     @Override
@@ -166,6 +287,20 @@ public class WebViewActivity extends BaseActivity {
         Intent intent = new Intent(mContext, WebViewActivity.class);
         intent.putExtra("url", mUrl);
         intent.putExtra("mTitle", mTitle);
+        mContext.startActivity(intent);
+    }
+
+    /**
+     * 打开对应网址
+     *
+     * @param mContext
+     * @param info
+     */
+    public static void loadUrl(Context mContext, GankBean.ResultBean info) {
+        Intent intent = new Intent(mContext, WebViewActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("info", info);
+        intent.putExtras(bundle);
         mContext.startActivity(intent);
     }
 

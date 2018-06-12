@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.yq.yunmusic.LoadingDialog;
 import com.yq.yunmusic.R;
@@ -82,6 +83,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void dismissLoadingDialog() {
         if (null != loadingDialog && loadingDialog.isShowing())
             loadingDialog.dismiss();
+    }
+
+    protected void toast(String content) {
+        Toast.makeText(this, content, Toast.LENGTH_LONG).show();
     }
 
 }
