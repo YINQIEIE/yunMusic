@@ -67,6 +67,10 @@ public class GankBean<T> {
         protected String who;
         @Ignore
         protected List<String> images;
+        protected String imageUrl;
+
+        public ResultBean() {
+        }
 
         public ResultBean(String _id, String name, String createdAt, String desc, String publishedAt, String type, String url, boolean used, String who, List<String> images, String imageUrl) {
             this._id = _id;
@@ -88,15 +92,6 @@ public class GankBean<T> {
 
         public void setImageUrl(String imageUrl) {
             this.imageUrl = imageUrl;
-        }
-
-        protected String imageUrl;
-
-        public ResultBean() {
-        }
-
-        public ResultBean(String name) {
-            this.name = name;
         }
 
         public String get_id() {

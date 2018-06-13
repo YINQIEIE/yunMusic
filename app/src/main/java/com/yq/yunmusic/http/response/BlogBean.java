@@ -3,6 +3,7 @@ package com.yq.yunmusic.http.response;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Date;
 @Entity(tableName = "blog", indices = {@Index(value = {"_id"}, unique = true)})
 public class BlogBean extends GankBean.ResultBean {
 
+    @NonNull
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String tag;//标签

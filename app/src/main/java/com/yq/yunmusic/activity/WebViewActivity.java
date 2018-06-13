@@ -25,6 +25,7 @@ import com.yq.yunmusic.R;
 import com.yq.yunmusic.base.BaseActivity;
 import com.yq.yunmusic.http.response.AppDatabase;
 import com.yq.yunmusic.http.response.BlogBean;
+import com.yq.yunmusic.http.response.BlogDao;
 import com.yq.yunmusic.http.response.GankBean;
 
 import java.lang.reflect.Method;
@@ -33,7 +34,7 @@ import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class WebViewActivity extends BaseActivity {
@@ -48,7 +49,7 @@ public class WebViewActivity extends BaseActivity {
     private String webUrl;
     boolean hasLoaded = false;
     private GankBean.ResultBean info;
-    private Disposable dbSubscribe;
+    private CompositeDisposable mDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -206,6 +207,7 @@ public class WebViewActivity extends BaseActivity {
      * 收藏博客
      */
     private void collectBlog() {
+        //不用 orm 框架
 //        DbManager dbManager = new DbManager(this);
 //        List<String> list = dbManager.queryAllBlogs();
 //        for (int i = 0; i < list.size(); i++) {
@@ -213,33 +215,54 @@ public class WebViewActivity extends BaseActivity {
 //        }
 //        if (dbManager.addBlog(webUrl))
 //            toast("收藏成功");
+        BlogDao blogDao = AppDatabase.getInstance(WebViewActivity.this).getBlogDao();
         final BlogBean blogBean = new BlogBean(info);
-        AppDatabase.getInstance(WebViewActivity.this).getBlogDao().insertSingleBlog(blogBean);
-        dbSubscribe = Observable.create((ObservableOnSubscribe<Long>) e -> AppDatabase.getInstance(WebViewActivity.this).getBlogDao().insertSingleBlog(blogBean)).subscribeOn(Schedulers.io())
+        //第一种方法
+//        Completable completable = Completable.fromAction(() ->
+//                blogDao.insertSingleBlog(blogBean)
+//        );
+//        mDisposable.add(completable
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(() -> {
+//                    toast("收藏成功");
+//                }, throwable -> {
+//                    toast("收藏失败");
+//                }));
+        //第二种方法
+//        mDisposable.add(Observable.just(1).map(integer ->
+//                blogDao.insertSingleBlog(blogBean)
+//        )
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(
+//                        id -> onCollectSuccess(blogDao, id)
+//                        , throwable -> onCollectFailed()
+//                ));
+        //第三种方法 由于插入方法中返回值类型不确定，不能将返回值设置为 Flowable<Long>
+        //所以，在这几种方法中这是最科学的方法了
+        mDisposable.add(Observable.create((ObservableOnSubscribe<Long>) e ->
+                e.onNext(blogDao.insertSingleBlog(blogBean))
+        )
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(id -> {
-                    if (id > 0) {
-                        toast("收藏成功");
-                        if (!dbSubscribe.isDisposed())
-                            dbSubscribe.dispose();
-                    }
-                }, throwable -> {
-                    toast("收藏失败");
-                    if (!dbSubscribe.isDisposed())
-                        dbSubscribe.dispose();
-                });
+                .subscribe(
+                        id -> onCollectSuccess(blogDao, id),
+                        throwable -> onCollectFailed()
+                ));
+        //第四种方法 不用 rxjava
 //        new Thread() {
 //            @Override
 //            public void run() {
 //                super.run();
 //                BlogBean blogBean = new BlogBean(info);
-//                log(AppDatabase.getInstance(WebViewActivity.this).getBlogDao().insertSingleBlog(blogBean));
+//                log(blogDao.insertSingleBlog(blogBean));
 //                try {
 //                    Thread.sleep(1000);
 //                } catch (InterruptedException e) {
 //                    e.printStackTrace();
 //                }
-//                List<BlogBean> blogs = AppDatabase.getInstance(WebViewActivity.this).getBlogDao().findAll();
+//                List<BlogBean> blogs = blogDao.getAllBlogs();
 //                for (int i = 0; i < blogs.size(); i++) {
 //                    log(blogs.get(i).toString());
 //                }
@@ -247,11 +270,45 @@ public class WebViewActivity extends BaseActivity {
 //        }.start();
     }
 
+    /**
+     * 收藏失败
+     */
+    private void onCollectFailed() {
+        toast("收藏失败");
+    }
+
+    /**
+     * 收藏成功
+     *
+     * @param blogDao dao
+     * @param id      id
+     */
+    private void onCollectSuccess(BlogDao blogDao, Long id) {
+        if (id > 0) {
+            log(id);
+            toast("收藏成功");
+            getAllBlogs(blogDao);
+        }
+    }
+
+    /**
+     * 获取已经收藏的所有博客
+     *
+     * @param blogDao dao
+     */
+    private void getAllBlogs(BlogDao blogDao) {
+        mDisposable.add(blogDao.findAll().subscribeOn(Schedulers.io())
+                .subscribe(list ->
+                        Observable.fromArray(list).subscribe(blog -> log(blog))));
+    }
+
     @Override
     protected void onDestroy() {
 //        clearCookies();
         super.onDestroy();
         webView.destroy();
+        //mDisposable.clear()也可以
+        mDisposable.dispose();
     }
 
     /**
