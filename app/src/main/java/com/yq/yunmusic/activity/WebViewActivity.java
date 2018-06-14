@@ -50,6 +50,7 @@ public class WebViewActivity extends BaseActivity {
     boolean hasLoaded = false;
     private GankBean.ResultBean info;
     private CompositeDisposable mDisposable = new CompositeDisposable();
+    private BlogDao blogDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -207,6 +208,7 @@ public class WebViewActivity extends BaseActivity {
      * 收藏博客
      */
     private void collectBlog() {
+        toast("collect");
         //不用 orm 框架
 //        DbManager dbManager = new DbManager(this);
 //        List<String> list = dbManager.queryAllBlogs();
@@ -215,7 +217,8 @@ public class WebViewActivity extends BaseActivity {
 //        }
 //        if (dbManager.addBlog(webUrl))
 //            toast("收藏成功");
-        BlogDao blogDao = AppDatabase.getInstance(WebViewActivity.this).getBlogDao();
+        if (null == blogDao)
+            blogDao = AppDatabase.getInstance(WebViewActivity.this).getBlogDao();
         final BlogBean blogBean = new BlogBean(info);
         //第一种方法
 //        Completable completable = Completable.fromAction(() ->
@@ -235,21 +238,17 @@ public class WebViewActivity extends BaseActivity {
 //        )
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(
-//                        id -> onCollectSuccess(blogDao, id)
-//                        , throwable -> onCollectFailed()
-//                ));
+//                .subscribe(this::onCollectSuccess, this::onCollectFailed));
         //第三种方法 由于插入方法中返回值类型不确定，不能将返回值设置为 Flowable<Long>
         //所以，在这几种方法中这是最科学的方法了
-        mDisposable.add(Observable.create((ObservableOnSubscribe<Long>) e ->
-                e.onNext(blogDao.insertSingleBlog(blogBean))
-        )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        id -> onCollectSuccess(blogDao, id),
-                        throwable -> onCollectFailed()
-                ));
+        mDisposable.add(blogDao.queryBlogById(info.get_id())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(blog -> {
+                                }, throwable -> addCollectedBlog(blogBean)
+                        )
+        );
+
         //第四种方法 不用 rxjava
 //        new Thread() {
 //            @Override
@@ -271,35 +270,46 @@ public class WebViewActivity extends BaseActivity {
     }
 
     /**
+     * 插入数据方法
+     *
+     * @param blogBean 收藏的 blog 对象
+     */
+    private void addCollectedBlog(BlogBean blogBean) {
+        mDisposable.add(Observable.create((ObservableOnSubscribe<Long>) e ->
+                e.onNext(blogDao.insertSingleBlog(blogBean))
+        )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onCollectSuccess, this::onCollectFailed));
+    }
+
+    /**
      * 收藏失败
      */
-    private void onCollectFailed() {
+    private void onCollectFailed(Throwable throwable) {
         toast("收藏失败");
     }
 
     /**
      * 收藏成功
      *
-     * @param blogDao dao
-     * @param id      id
+     * @param id id
      */
-    private void onCollectSuccess(BlogDao blogDao, Long id) {
+    private void onCollectSuccess(Long id) {
         if (id > 0) {
             log(id);
             toast("收藏成功");
-            getAllBlogs(blogDao);
+            getAllBlogs();
         }
     }
 
     /**
      * 获取已经收藏的所有博客
-     *
-     * @param blogDao dao
      */
-    private void getAllBlogs(BlogDao blogDao) {
+    private void getAllBlogs() {
         mDisposable.add(blogDao.findAll().subscribeOn(Schedulers.io())
                 .subscribe(list ->
-                        Observable.fromArray(list).subscribe(blog -> log(blog))));
+                        Observable.fromIterable(list).subscribe(blog -> log(blog))));
     }
 
     @Override

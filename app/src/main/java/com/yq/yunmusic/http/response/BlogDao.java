@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 @Dao
 public abstract class BlogDao {
@@ -32,7 +33,13 @@ public abstract class BlogDao {
     @Query("SELECT * FROM blog")
     public abstract List<BlogBean> getAllBlogs();
 
+    /**
+     * Single 在数据库中有用户时触发 onSuccess，没有触发 onError
+     *
+     * @param id 文章 id
+     * @return 已收藏博客信息
+     */
     @Query("SELECT * FROM blog WHERE _id = :id")
-    public abstract Flowable<BlogBean> queryBlogById(String id);
+    public abstract Single<BlogBean> queryBlogById(String id);
 
 }
