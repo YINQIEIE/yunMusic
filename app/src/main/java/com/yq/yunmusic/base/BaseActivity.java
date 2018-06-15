@@ -85,8 +85,16 @@ public abstract class BaseActivity extends AppCompatActivity {
             loadingDialog.dismiss();
     }
 
+    Toast toast;
+
     protected void toast(String content) {
-        Toast.makeText(this, content, Toast.LENGTH_LONG).show();
+        if (null == toast)
+            toast = Toast.makeText(this, content, Toast.LENGTH_LONG);
+        else {
+//            toast.cancel();
+            toast.setText(content);
+        }
+        toast.show();
     }
 
 }

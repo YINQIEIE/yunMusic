@@ -42,4 +42,7 @@ public abstract class BlogDao {
     @Query("SELECT * FROM blog WHERE _id = :id")
     public abstract Single<BlogBean> queryBlogById(String id);
 
+    @Query("delete FROM blog WHERE _id = :id")
+    public abstract int deleteBlogById(String id);
+
 }

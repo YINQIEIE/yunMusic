@@ -3,11 +3,15 @@ package com.yq.yunmusic.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +24,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.yq.yunmusic.R;
 import com.yq.yunmusic.base.BaseActivity;
@@ -51,6 +56,7 @@ public class WebViewActivity extends BaseActivity {
     private GankBean.ResultBean info;
     private CompositeDisposable mDisposable = new CompositeDisposable();
     private BlogDao blogDao;
+    private boolean isCollected;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -155,6 +161,8 @@ public class WebViewActivity extends BaseActivity {
         webView.loadUrl(webUrl = info.getUrl());
         log("from intent" + webUrl);
         parent.addView(webView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        blogDao = AppDatabase.getInstance(WebViewActivity.this).getBlogDao();
+        isCollected();
     }
 
     @Override
@@ -170,6 +178,15 @@ public class WebViewActivity extends BaseActivity {
         setOptionalIconsVisibility(menu);
         getMenuInflater().inflate(R.menu.web_toolbar_menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (isCollected)
+            menu.findItem(R.id.collection).setTitle("取消收藏");
+        else
+            menu.findItem(R.id.collection).setTitle("收藏");
+        return super.onPrepareOptionsMenu(menu);
     }
 
     /**
@@ -208,7 +225,6 @@ public class WebViewActivity extends BaseActivity {
      * 收藏博客
      */
     private void collectBlog() {
-        toast("collect");
         //不用 orm 框架
 //        DbManager dbManager = new DbManager(this);
 //        List<String> list = dbManager.queryAllBlogs();
@@ -217,8 +233,6 @@ public class WebViewActivity extends BaseActivity {
 //        }
 //        if (dbManager.addBlog(webUrl))
 //            toast("收藏成功");
-        if (null == blogDao)
-            blogDao = AppDatabase.getInstance(WebViewActivity.this).getBlogDao();
         final BlogBean blogBean = new BlogBean(info);
         //第一种方法
 //        Completable completable = Completable.fromAction(() ->
@@ -241,14 +255,10 @@ public class WebViewActivity extends BaseActivity {
 //                .subscribe(this::onCollectSuccess, this::onCollectFailed));
         //第三种方法 由于插入方法中返回值类型不确定，不能将返回值设置为 Flowable<Long>
         //所以，在这几种方法中这是最科学的方法了
-        mDisposable.add(blogDao.queryBlogById(info.get_id())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(blog -> {
-                                }, throwable -> addCollectedBlog(blogBean)
-                        )
-        );
-
+        if (!isCollected) {
+            addBlogToCollection(blogBean);
+        } else
+            deleteFromCollection();
         //第四种方法 不用 rxjava
 //        new Thread() {
 //            @Override
@@ -270,11 +280,27 @@ public class WebViewActivity extends BaseActivity {
     }
 
     /**
+     * 判断是否已经收藏
+     *
+     * @return true 已收藏过
+     */
+    private boolean isCollected() {
+        mDisposable.add(blogDao.queryBlogById(info.get_id())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(blog -> isCollected = true,
+                        throwable -> isCollected = false
+                )
+        );
+        return isCollected;
+    }
+
+    /**
      * 插入数据方法
      *
      * @param blogBean 收藏的 blog 对象
      */
-    private void addCollectedBlog(BlogBean blogBean) {
+    private void addBlogToCollection(BlogBean blogBean) {
         mDisposable.add(Observable.create((ObservableOnSubscribe<Long>) e ->
                 e.onNext(blogDao.insertSingleBlog(blogBean))
         )
@@ -284,10 +310,27 @@ public class WebViewActivity extends BaseActivity {
     }
 
     /**
+     * 删除已经收藏的 blog
+     */
+    private void deleteFromCollection() {
+        mDisposable.add(Observable.create((ObservableOnSubscribe<Integer>) e ->
+                e.onNext(blogDao.deleteBlogById(info.get_id())))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    if (result > 0) {
+                        toast("取消收藏成功~");
+                        isCollected = false;
+                    }
+                }));
+    }
+
+    /**
      * 收藏失败
      */
     private void onCollectFailed(Throwable throwable) {
         toast("收藏失败");
+        isCollected = false;
     }
 
     /**
@@ -297,10 +340,24 @@ public class WebViewActivity extends BaseActivity {
      */
     private void onCollectSuccess(Long id) {
         if (id > 0) {
-            log(id);
-            toast("收藏成功");
+            showSnackBar();
             getAllBlogs();
+            isCollected = true;
         }
+    }
+
+    private void showSnackBar() {
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.root), "收藏成功", 1500)
+                .setAction("添加标签", v -> {
+                    toast("添加标签");
+                });
+        snackbar.setActionTextColor(Color.WHITE);
+        ViewGroup.LayoutParams vL = snackbar.getView().getLayoutParams();
+        CoordinatorLayout.LayoutParams newLayoutParams = new CoordinatorLayout.LayoutParams(-1, vL.height);
+        newLayoutParams.gravity = Gravity.BOTTOM;
+        snackbar.getView().setLayoutParams(newLayoutParams);
+        ((TextView) snackbar.getView().findViewById(R.id.snackbar_text)).setTextColor(Color.WHITE);
+        snackbar.show();
     }
 
     /**
