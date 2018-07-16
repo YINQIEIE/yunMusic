@@ -29,5 +29,5 @@ task clean(type: Delete) {
 }
 
 ext {
-    supportVersion = '26.1.0'
+    supportVersion = '27.1.1'
 }
